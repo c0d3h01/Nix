@@ -38,27 +38,8 @@
       XDG_STATE_HOME = "${config.xdg.stateHome}";
     };
 
-    packages = with pkgs; [
-      gdb
-      # langservers
-      nil
-      nixd
-      bash-language-server
-      typescript-language-server
-      vscode-langservers-extracted
-      eslint
-      html-tidy
-      pyright
-      gopls
-      clang-tools
-      lua-language-server
-      yaml-language-server
-      taplo
-      dockerfile-language-server
-      terraform-ls
-      marksman
-      sqls
-    ];
+    # packages = with pkgs; [
+    # ];
   };
 
   xdg = lib.mkForce {
