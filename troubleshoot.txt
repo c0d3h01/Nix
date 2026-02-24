@@ -1,0 +1,11 @@
+mount -o subvol=@ /dev/nvme0n1p3 /mnt
+mkdir -p /mnt/{home,nix,var/tmp,var/log}
+mount -o subvol=@home /dev/nvme0n1p3 /mnt/home
+mount -o subvol=@nix /dev/nvme0n1p3 /mnt/nix
+mount -o subvol=@tmp /dev/nvme0n1p3 /mnt/var/tmp
+mount -o subvol=@log /dev/nvme0n1p3 /mnt/var/log
+mkdir -p /mnt/boot
+mount /dev/nvme0n1p1 /mnt/boot
+swapon /dev/nvme0n1p2
+cp /etc/resolv.conf /mnt/etc/resolv.conf
+nixos-enter --root /mnt
