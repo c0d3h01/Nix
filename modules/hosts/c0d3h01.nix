@@ -1,20 +1,14 @@
-{
-  lib,
-  userConfig,
-  ...
-}: let
-  isUsr = userConfig.username == "c0d3h01";
-
+_: let
   # Define your keys here to reuse them
   myKeys = [
     "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAICSjL8HGjiSAnLHupMZin095bql7A8+UDfc7t9XCZs8l c0d3h01"
   ];
 in {
   imports = [
-    ../../disko/hardware0x0.nix
+    ../disko/hardware0x0.nix
   ];
 
-  users.users = lib.mkIf isUsr {
+  users.users = {
     root = {
       hashedPassword = "";
       # Use the variable defined above

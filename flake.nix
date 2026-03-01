@@ -1,30 +1,40 @@
 {
-  description = "Harshal (c0d3h01)'s dotfiles";
+  description = "NixOS Dotfiles";
 
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
-
-    systems.url = "github:nix-systems/default";
-
     flake-parts.url = "github:hercules-ci/flake-parts";
-
+    flake-utils.url = "github:numtide/flake-utils";
+    devshell.url = "github:numtide/devshell";
+    devshell.inputs.nixpkgs.follows = "nixpkgs";
     disko.url = "github:nix-community/disko";
     disko.inputs.nixpkgs.follows = "nixpkgs";
-
+    easy-hosts.url = "github:tgirlcloud/easy-hosts";
     home-manager.url = "github:nix-community/home-manager";
     home-manager.inputs.nixpkgs.follows = "nixpkgs";
-
     sops.url = "github:Mic92/sops-nix";
     sops.inputs.nixpkgs.follows = "nixpkgs";
-
     spicetify.url = "github:Gerg-L/spicetify-nix";
     spicetify.inputs.nixpkgs.follows = "nixpkgs";
+    nix-openclaw.url = "github:openclaw/nix-openclaw";
   };
 
-  outputs = inputs:
-    inputs.flake-parts.lib.mkFlake {inherit inputs;} {
-      imports = [
-        ./flake/parts
+  outputs = {flake-utils, ...} @ inputs:
+    inputs.flake-parts.lib.mkFlake {inherit inputs;} (_: {
+      systems = with flake-utils.lib; [
+        system.x86_64-linux
+        system.aarch64-linux
+        system.aarch64-darwin
       ];
-    };
+
+      imports = [
+        # keep-sorted start
+        modules/flake/devShell.nix
+        modules/flake/formatter.nix
+        modules/flake/home.nix
+        modules/flake/nixos.nix
+        modules/flake/overlays.nix
+        # keep-sorted end
+      ];
+    });
 }
