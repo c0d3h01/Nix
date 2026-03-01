@@ -4,7 +4,11 @@
   config,
   ...
 }: {
-  imports = [inputs.sops.homeManagerModules.sops];
+  imports = [
+    # keep-sorted start
+    inputs.sops.homeManagerModules.sops
+    # keep-sorted end
+  ];
 
   sops = {
     defaultSopsFile = "${self}/secrets/default.yaml";

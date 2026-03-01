@@ -1,11 +1,11 @@
 {
   imports = [
+    # keep-sorted start
     ./git
-    ./nvim
-    ./diff-so-fancy.nix
-    ./gemini-cli.nix
     ./lazygit.nix
+    ./neovim.nix
     ./spicetify.nix
     ./wezterm.nix
+    # keep-sorted end
   ];
 }

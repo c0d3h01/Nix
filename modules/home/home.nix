@@ -1,14 +1,18 @@
 {
   config,
   userConfig,
+  inputs,
   pkgs,
   lib,
   ...
 }: {
   imports = [
+    # keep-sorted start
     ./cli
     ./programs
     ./service
+    inputs.nix-openclaw.homeManagerModules.openclaw
+    # keep-sorted end
   ];
 
   # enable - Home Manager.
@@ -48,12 +52,5 @@
       enable = true;
       createDirectories = true;
     };
-  };
-
-  programs.less = {
-    enable = true;
-    config = ''
-      i quit
-    '';
   };
 }

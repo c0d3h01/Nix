@@ -8,7 +8,9 @@
   inherit (lib) mkIf;
 in {
   imports = [
+    # keep-sorted start
     inputs.spicetify.homeManagerModules.default
+    # keep-sorted end
   ];
 
   programs.spicetify = mkIf userConfig.workstation (

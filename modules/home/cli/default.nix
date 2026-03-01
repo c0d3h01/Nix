@@ -1,5 +1,6 @@
 {
   imports = [
+    # keep-sorted start
     ./shell
     ./starship
     ./bat.nix
@@ -11,5 +12,6 @@
     ./tmux.nix
     ./yt-dlp.nix
     ./zoxide.nix
+    # keep-sorted end
   ];
 }

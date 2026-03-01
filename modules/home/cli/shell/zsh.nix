@@ -92,36 +92,6 @@
       	add_to_path "$FLUTTER_HOME/bin"
       fi
 
-      # Go
-      export GOPATH="$HOME/.local/share/go"
-      export GOBIN="$GOPATH/bin"
-      add_to_path "$GOBIN"
-
-      # NVM - Node Version Manager
-      export NVM_DIR="$HOME/.local/share/nvm"
-      [ -d "$NVM_DIR" ] || mkdir -p "$NVM_DIR"
-
-      # Other tools
-      add_to_path "$HOME/.local/share/solana/install/active_release/bin"
-
-      # Local bins
-      add_to_path "$HOME/.avm/bin"
-      add_to_path "$HOME/.local/bin"
-      add_to_path "$HOME/.local/share/npm-global/bin"
-
-      # Bun
-      export BUN_INSTALL="$HOME/.local/share/bun"
-      add_to_path "$BUN_INSTALL/bin"
-
-      # Rust Build Environment
-      export CARGO_HOME="$HOME/.local/share/.cargo"
-      if [ -f "$CARGO_HOME/env" ]; then
-          source "$CARGO_HOME/env"
-      fi
-      add_to_path "$HOME/.local/share/.cargo/bin"
-
-      export K9S_CONFIG_DIR="$HOME/.config/k9s"
-
       # Extract archives
       extract() {
           local file="$1" dir="''${2:-.}"
@@ -149,25 +119,6 @@
           mkdir -p "$1" && cd "$1"
       }
 
-      # Smart make
-      make() {
-          local build_path="$(git rev-parse --show-toplevel 2>/dev/null || pwd)"
-          [[ ! -f "$build_path/Makefile" ]] && build_path="."
-          command nice -n 19 make -C "$build_path" -j"$(nproc)" "$@"
-      }
-
-      # Common navigation aliases
-      alias ..='cd ..'
-      alias ...='cd ../..'
-
-      # System aliases
-      alias cp='cp -i'
-      alias mv='mv -i'
-      alias grep='grep --color=always'
-      alias ip='ip --color=always'
-      alias diff='diff --color=always'
-      alias rm='rm -Iv --one-file-system --preserve-root'
-
       # kubectl completion
       if command -v kubectl >/dev/null 2>&1; then
           source <(kubectl completion zsh)
@@ -177,32 +128,6 @@
       if command -v sops >/dev/null 2>&1; then
           source <(sops completion zsh)
       fi
-
-      # load nix
-      ifsource /etc/profile.d/nix.sh
-      ifsource "$HOME/.nix-profile/etc/profile.d/hm-session-vars.sh"
-
-      # Source dir hashes
-      ifsource "$HOME/.local/share/zsh/.zsh_dir_hashes"
-
-      # Vim mode
-      autoload -Uz edit-command-line
-      zle -N edit-command-line
-      bindkey -v
-      bindkey '^P' history-search-backward
-      bindkey '^N' history-search-forward
-      bindkey '^?' backward-delete-char
-      bindkey '^h' backward-delete-char
-      bindkey '^w' backward-kill-word
-      bindkey '^H' backward-kill-word
-      bindkey '^[^?' backward-kill-word
-      bindkey '^a' beginning-of-line
-      bindkey '^e' end-of-line
-      bindkey '^xe' edit-command-line
-      bindkey '^x^e' edit-command-line
-      bindkey "''${terminfo[kcuu1]}" history-search-backward
-      bindkey "''${terminfo[kcud1]}" history-search-forward
-      export KEYTIMEOUT=1
     '';
   };
 }
