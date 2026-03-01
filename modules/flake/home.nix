@@ -4,7 +4,8 @@
   self,
   ...
 }: let
-  hosts = import ../hosts/hosts.nix;
+  inherit (inputs.nixpkgs) lib;
+  hosts = import ../hosts;
   overlay = config.flake.overlays.default;
   homeModule = self + /modules/home/home.nix;
 
@@ -18,21 +19,35 @@
       };
     };
 
-  mkHomeConfiguration = hostName: userConfig:
-    inputs.home-manager.lib.homeManagerConfiguration {
-      pkgs = mkPkgs userConfig.system;
-      extraSpecialArgs = {
-        inherit
-          hostName
-          inputs
-          self
-          userConfig
-          ;
-      };
-      modules = [
-        homeModule
-      ];
-    };
+  # Build one homeConfiguration per user across all hosts
+  mkAllHomeConfigs = let
+    perHost = hostName: hostCfg:
+      lib.mapAttrsToList (
+        userName: userCfg:
+          lib.nameValuePair "${userName}@${hostName}" (
+            inputs.home-manager.lib.homeManagerConfiguration {
+              pkgs = mkPkgs hostCfg.system;
+              extraSpecialArgs = {
+                inherit inputs self;
+                userConfig =
+                  userCfg
+                  // {
+                    username = userName;
+                    hostname = hostName;
+                    inherit (hostCfg) system;
+                  };
+              };
+              modules = [homeModule];
+            }
+          )
+      )
+      hostCfg.users;
+  in
+    builtins.listToAttrs (
+      builtins.concatLists (
+        lib.mapAttrsToList perHost hosts
+      )
+    );
 in {
   imports = [
     # keep-sorted start
@@ -42,10 +57,6 @@ in {
 
   flake = {
     homeModules.default = homeModule;
-    homeConfigurations =
-      inputs.nixpkgs.lib.mapAttrs (
-        _: homeHost: mkHomeConfiguration homeHost.hostName homeHost.userConfig
-      )
-      hosts.home;
+    homeConfigurations = mkAllHomeConfigs;
   };
 }

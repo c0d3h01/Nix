@@ -4,8 +4,35 @@
   self,
   ...
 }: let
-  hosts = import ../hosts/hosts.nix;
+  inherit (inputs.nixpkgs) lib;
+  hosts = import ../hosts;
   homeModule = self + /modules/home/home.nix;
+
+  # Find the primary user for a host (the one with isMainUser = true)
+  mainUser = hostCfg: let
+    found =
+      builtins.filter
+      (name: hostCfg.users.${name}.isMainUser or false)
+      (builtins.attrNames hostCfg.users);
+  in
+    builtins.head found;
+
+  # Build easy-hosts entry from our flat registry
+  mkEasyHost = hostName: hostCfg: let
+    primary = mainUser hostCfg;
+    userCfg = hostCfg.users.${primary};
+  in {
+    arch = builtins.head (lib.splitString "-" hostCfg.system);
+    class = "nixos";
+    path = builtins.head hostCfg.modules;
+    specialArgs.hostConfig =
+      {
+        hostname = hostName;
+        username = primary;
+        inherit (hostCfg) system bootloader;
+      }
+      // userCfg;
+  };
 in {
   imports = [
     # keep-sorted start
@@ -22,24 +49,20 @@ in {
         nixpkgs.overlays = [config.flake.overlays.default];
       }
       (
-        {
-          hostName,
-          userConfig,
-          ...
-        }: {
+        {hostConfig, ...}: {
           home-manager = {
             useGlobalPkgs = true;
             useUserPackages = true;
             backupFileExtension = "bak";
             extraSpecialArgs = {
-              inherit
-                hostName
-                inputs
-                self
-                userConfig
-                ;
+              inherit inputs self;
+              userConfig =
+                hostConfig
+                // {
+                  inherit (hostConfig) username hostname system;
+                };
             };
-            users.${userConfig.username}.imports = [
+            users.${hostConfig.username}.imports = [
               # keep-sorted start
               homeModule
               # keep-sorted end
@@ -49,6 +72,6 @@ in {
       )
     ];
 
-    hosts = hosts.easyHosts;
+    hosts = builtins.mapAttrs mkEasyHost hosts;
   };
 }
