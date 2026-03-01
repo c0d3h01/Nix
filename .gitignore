@@ -1,6 +1,6 @@
-# nix builds
 result
-
-# direnv
 .direnv
 dotconfigs
+!AGENT.md
+!AGENTS.md
+!modules/home/service/openclaw/documents/AGENTS.md
