@@ -14,7 +14,7 @@ in {
     services.displayManager.defaultSession = "gnome";
 
     # KDE Connect requires specific ports to be open
-    networking.firewall = lib.mkIf (config.programs.firewall.enable) {
+    networking.firewall = lib.mkIf config.programs.firewall.enable {
       allowedTCPPorts = [1716]; # KDE connect port
       allowedUDPPorts = [1716];
     };

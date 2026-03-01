@@ -65,10 +65,12 @@ let
   mapAttrsToList = f: attrs:
     builtins.map (name: f name attrs.${name}) (builtins.attrNames attrs);
 in {
-  easyHosts = builtins.mapAttrs (_: host: {
-    inherit (host) arch class path;
-    specialArgs.userConfig = mkUserConfig host host.primaryUser;
-  }) hosts;
+  easyHosts =
+    builtins.mapAttrs (_: host: {
+      inherit (host) arch class path;
+      specialArgs.userConfig = mkUserConfig host host.primaryUser;
+    })
+    hosts;
 
   home = builtins.listToAttrs (
     builtins.concatLists (
