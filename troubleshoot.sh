@@ -1,3 +1,4 @@
+#!/usr/bin/env bash
 # 1. Mount the root BTRFS subvolume first
 sudo mount -t btrfs -o subvol=/@ /dev/nvme0n1p3 /mnt
 
