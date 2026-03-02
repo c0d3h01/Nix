@@ -62,31 +62,31 @@
     "net.core.default_qdisc" = lib.mkForce "fq";
     "net.ipv4.tcp_congestion_control" = lib.mkForce "bbr";
 
-    # SYN flood protection
-    "net.ipv4.tcp_syncookies" = lib.mkForce 1;
-    "net.ipv4.tcp_max_syn_backlog" = lib.mkForce 4096;
+    # # SYN flood protection
+    # "net.ipv4.tcp_syncookies" = lib.mkForce 1;
+    # "net.ipv4.tcp_max_syn_backlog" = lib.mkForce 4096;
 
-    # Disable ICMP redirects — prevents MITM routing attacks
-    "net.ipv4.conf.all.accept_redirects" = lib.mkForce 0;
-    "net.ipv4.conf.default.accept_redirects" = lib.mkForce 0;
-    "net.ipv4.conf.all.send_redirects" = lib.mkForce 0;
-    "net.ipv4.conf.default.send_redirects" = lib.mkForce 0;
-    "net.ipv6.conf.all.accept_redirects" = lib.mkForce 0;
-    "net.ipv6.conf.default.accept_redirects" = lib.mkForce 0;
+    # # Disable ICMP redirects — prevents MITM routing attacks
+    # "net.ipv4.conf.all.accept_redirects" = lib.mkForce 0;
+    # "net.ipv4.conf.default.accept_redirects" = lib.mkForce 0;
+    # "net.ipv4.conf.all.send_redirects" = lib.mkForce 0;
+    # "net.ipv4.conf.default.send_redirects" = lib.mkForce 0;
+    # "net.ipv6.conf.all.accept_redirects" = lib.mkForce 0;
+    # "net.ipv6.conf.default.accept_redirects" = lib.mkForce 0;
 
-    # Disable source routing — prevents IP spoofing
-    "net.ipv4.conf.all.accept_source_route" = lib.mkForce 0;
-    "net.ipv4.conf.default.accept_source_route" = lib.mkForce 0;
-    "net.ipv6.conf.all.accept_source_route" = lib.mkForce 0;
-    "net.ipv6.conf.default.accept_source_route" = lib.mkForce 0;
+    # # Disable source routing — prevents IP spoofing
+    # "net.ipv4.conf.all.accept_source_route" = lib.mkForce 0;
+    # "net.ipv4.conf.default.accept_source_route" = lib.mkForce 0;
+    # "net.ipv6.conf.all.accept_source_route" = lib.mkForce 0;
+    # "net.ipv6.conf.default.accept_source_route" = lib.mkForce 0;
 
-    # Log Martian packets — detect spoofed traffic
-    "net.ipv4.conf.all.log_martians" = lib.mkForce 1;
-    "net.ipv4.conf.default.log_martians" = lib.mkForce 1;
+    # # Log Martian packets — detect spoofed traffic
+    # "net.ipv4.conf.all.log_martians" = lib.mkForce 1;
+    # "net.ipv4.conf.default.log_martians" = lib.mkForce 1;
 
-    # Enable reverse-path filtering (strict mode)
-    "net.ipv4.conf.all.rp_filter" = lib.mkForce 1;
-    "net.ipv4.conf.default.rp_filter" = lib.mkForce 1;
+    # # Enable reverse-path filtering (strict mode)
+    # "net.ipv4.conf.all.rp_filter" = lib.mkForce 1;
+    # "net.ipv4.conf.default.rp_filter" = lib.mkForce 1;
 
     # IPv6 privacy extensions
     "net.ipv6.conf.all.use_tempaddr" = lib.mkForce 2;
