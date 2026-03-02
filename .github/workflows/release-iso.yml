@@ -43,10 +43,12 @@ jobs:
             TAG="v$(date -u +%Y.%m.%d)-${GITHUB_SHA::7}"
           fi
 
-          echo "host=${HOST}" >> "$GITHUB_OUTPUT"
-          echo "tag=${TAG}" >> "$GITHUB_OUTPUT"
-          echo "date=$(date -u +%Y-%m-%d)" >> "$GITHUB_OUTPUT"
-          echo "sha=${GITHUB_SHA::7}" >> "$GITHUB_OUTPUT"
+          {
+            echo "host=${HOST}"
+            echo "tag=${TAG}"
+            echo "date=$(date -u +%Y-%m-%d)"
+            echo "sha=${GITHUB_SHA::7}"
+          } >> "$GITHUB_OUTPUT"
 
       - name: Build ISO
         run: |
@@ -70,17 +72,21 @@ jobs:
           # Capture size for release notes
           SIZE="$(du -h "$ISO_NAME" | cut -f1)"
 
-          echo "iso=${ISO_NAME}" >> "$GITHUB_OUTPUT"
-          echo "checksum=${ISO_NAME}.sha256" >> "$GITHUB_OUTPUT"
-          echo "size=${SIZE}" >> "$GITHUB_OUTPUT"
+          {
+            echo "iso=${ISO_NAME}"
+            echo "checksum=${ISO_NAME}.sha256"
+            echo "size=${SIZE}"
+          } >> "$GITHUB_OUTPUT"
 
       - name: Collect system info
         id: info
         run: |
           NIXPKGS="$(nix flake metadata --json 2>/dev/null | jq -r '.locks.nodes.nixpkgs.locked.rev // "unknown"' | head -c 7)"
           KERNEL="$(nix eval --raw ".#nixosConfigurations.${{ steps.vars.outputs.host }}.config.boot.kernelPackages.kernel.version" 2>/dev/null || echo "zen")"
-          echo "nixpkgs=${NIXPKGS}" >> "$GITHUB_OUTPUT"
-          echo "kernel=${KERNEL}" >> "$GITHUB_OUTPUT"
+          {
+            echo "nixpkgs=${NIXPKGS}"
+            echo "kernel=${KERNEL}"
+          } >> "$GITHUB_OUTPUT"
 
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
