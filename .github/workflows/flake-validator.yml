@@ -1,17 +1,17 @@
-name: Flake CI - checks, inputs
+# Validate Nix flake — check inputs and run `nix flake check`.
+name: Validate
 
 on:
-  pull_request:
   push:
     branches: [master]
+  pull_request:
 
 permissions: {}
 
 jobs:
-  check-flake:
-    name: Check flake
-    runs-on: ubuntu-22.04
-
+  validate:
+    name: Flake check
+    runs-on: ubuntu-latest
     permissions:
       id-token: write
       contents: read
@@ -20,7 +20,7 @@ jobs:
       - uses: actions/checkout@v6
       - uses: DeterminateSystems/nix-installer-action@v20
 
-      - name: Check Nix flake inputs
+      - name: Check flake inputs
         uses: DeterminateSystems/flake-checker-action@main
         with:
           check-owner: false

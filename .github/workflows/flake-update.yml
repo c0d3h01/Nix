@@ -1,11 +1,10 @@
-# Update git submodules daily (02:51 UTC).
-name: Update submodules
+# Update flake.lock weekly (Sunday 00:00 UTC).
+name: Update flake inputs
 
 on:
-  repository_dispatch:
   workflow_dispatch:
   schedule:
-    - cron: "51 2 * * *"
+    - cron: "0 0 * * 0"
 
 permissions: {}
 
@@ -14,26 +13,20 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: write
+      id-token: write
       pull-requests: write
       checks: read
       statuses: read
 
     steps:
       - uses: actions/checkout@v6
-        with:
-          submodules: recursive
-          token: ${{ secrets.GITHUB_TOKEN }}
+      - uses: DeterminateSystems/determinate-nix-action@v3
 
-      - name: Update submodules
-        run: git submodule update --remote --recursive
-
-      - name: Create pull request
+      - name: Update flake.lock
         id: pr
-        uses: peter-evans/create-pull-request@v8
+        uses: DeterminateSystems/update-flake-lock@main
         with:
-          commit-message: "chore: update submodules"
-          title: "chore: update submodules"
-          branch: submodule-updates
+          pr-title: "chore: update flake inputs"
 
     outputs:
       pull-request-url: ${{ steps.pr.outputs.pull-request-url }}

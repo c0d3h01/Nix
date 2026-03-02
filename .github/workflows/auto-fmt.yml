@@ -1,22 +1,21 @@
-name: Auto fmt src
+# Format all Nix files with treefmt. On push: create & merge a PR.
+# On PR: fail if formatting drifts.
+name: Format
 
 on:
   push:
-    branches:
-      - master
+    branches: [master]
   pull_request:
-    branches:
-      - master
+    branches: [master]
 
 permissions: {}
 
 jobs:
   format:
     runs-on: ubuntu-latest
-
     permissions:
-      pull-requests: write
       contents: write
+      pull-requests: write
       checks: read
       statuses: read
 
@@ -28,57 +27,29 @@ jobs:
         run: nix fmt
 
       - name: Check formatting (PR only)
-        if: ${{ github.event_name == 'pull_request' }}
+        if: github.event_name == 'pull_request'
         run: git diff --exit-code
 
-      - name: Create Pull Request
+      - name: Create pull request
         id: pr
-        if: ${{ github.event_name == 'push' }}
+        if: github.event_name == 'push'
         uses: peter-evans/create-pull-request@v8
         with:
-          commit-message: "style: auto fmt"
-          title: "nix fmt: auto format"
-          branch: nixfmt
+          commit-message: "style: auto-format"
+          title: "style: auto-format"
+          branch: auto-fmt
 
-      - name: Determine merge method
-        id: merge
-        if: ${{ github.event_name == 'push' && steps.pr.outputs.pull-request-url != '' }}
-        run: |
-          repo="${GITHUB_REPOSITORY}"
-          data="$(gh api "repos/${repo}")"
-          allow_rebase="$(echo "$data" | jq -r '.allow_rebase_merge')"
-          allow_merge="$(echo "$data" | jq -r '.allow_merge_commit')"
-          allow_squash="$(echo "$data" | jq -r '.allow_squash_merge')"
-          allow_auto="$(echo "$data" | jq -r '.allow_auto_merge')"
+    outputs:
+      pull-request-url: ${{ steps.pr.outputs.pull-request-url }}
 
-          if [ "$allow_rebase" = "true" ]; then
-            method="rebase"
-          elif [ "$allow_merge" = "true" ]; then
-            method="merge"
-          elif [ "$allow_squash" = "true" ]; then
-            method="squash"
-          else
-            echo "No allowed merge methods for ${repo}" >&2
-            exit 1
-          fi
-
-          echo "method=$method" >> "$GITHUB_OUTPUT"
-          echo "auto=$allow_auto" >> "$GITHUB_OUTPUT"
-        env:
-          GH_TOKEN: ${{ github.token }}
-
-      - name: Merge Pull Request
-        if: ${{ github.event_name == 'push' && steps.pr.outputs.pull-request-url != '' }}
-        run: |
-          pr="${{ steps.pr.outputs.pull-request-url }}"
-          method="${{ steps.merge.outputs.method }}"
-          auto="${{ steps.merge.outputs.auto }}"
-
-          if [ "$auto" = "true" ]; then
-            gh pr merge "--$method" --auto --delete-branch "$pr"
-          else
-            gh pr checks --watch "$pr"
-            gh pr merge "--$method" --delete-branch "$pr"
-          fi
-        env:
-          GH_TOKEN: ${{ github.token }}
+  merge:
+    needs: format
+    if: github.event_name == 'push'
+    uses: ./.github/workflows/auto-merge.yml
+    with:
+      pull-request-url: ${{ needs.format.outputs.pull-request-url }}
+    permissions:
+      contents: write
+      pull-requests: write
+      checks: read
+      statuses: read
