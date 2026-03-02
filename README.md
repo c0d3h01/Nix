@@ -41,7 +41,7 @@ and version-controlled. One command rebuilds the entire machine identically.
 .
 ├── flake.nix                   # Entrypoint — inputs & outputs
 ├── flake/                      # Flake parts
-│   ├── hosts.nix               #   NixOS, Home Manager, ISO builders
+│   ├── hosts.nix               #   NixOS, Home Manager builders
 │   ├── dev-shell.nix           #   Development shell (linters, tools)
 │   ├── formatter.nix           #   treefmt (alejandra, deadnix, statix)
 │   └── overlays.nix            #   Custom nixpkgs overlays
@@ -99,8 +99,6 @@ make rebuild laptop
 # Home Manager only
 make home laptop
 
-# Build installer ISO
-make iso laptop
 ```
 
 ### All Make targets
@@ -114,7 +112,7 @@ Usage: make <target> [HOST=<host>]
 
   rebuild      NixOS rebuild switch
   home         Home Manager switch
-  iso          Build installer ISO
+
   check        Flake check (all systems)
   fmt          Format all Nix files
   clean        GC + optimise Nix store
@@ -191,7 +189,7 @@ sudo reboot
 |---|---|---|
 | **Validate** | Push / PR | `nix flake check` + flake input validation |
 | **Format** | Push / PR | `nix fmt` via treefmt → auto-PR + merge on push |
-| **Release ISO** | Tag `v*` / manual | Build installer ISO → GitHub Release with checksums |
+
 | **Update flake inputs** | Weekly (Sun) | `update-flake-lock` → auto-PR + merge |
 | **Update submodules** | Daily | `git submodule update --remote` → auto-PR + merge |
 | **Dependabot** | Weekly | Keep GitHub Actions versions current |

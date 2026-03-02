@@ -1,4 +1,4 @@
-# Purpose: unified NixOS, Home Manager, and ISO host builder
+# Purpose: unified NixOS and Home Manager host builder
 {
   config,
   inputs,
@@ -76,45 +76,6 @@
         lib.mapAttrsToList perHost hosts
       )
     );
-
-  # ── ISO images ───────────────────────────────────────────────────────────
-  mkIso = {
-    system,
-    hostName,
-    hostCfg,
-  }: let
-    primary = mainUser hostCfg;
-    userCfg = hostCfg.users.${primary};
-  in
-    (lib.nixosSystem {
-      inherit system;
-      specialArgs = {
-        inherit hostName inputs self;
-        hostConfig =
-          {
-            hostname = hostName;
-            username = primary;
-            bootloader = "grub"; # ISOs always use GRUB
-            inherit (hostCfg) system;
-          }
-          // userCfg;
-      };
-      modules = [
-        (self + /modules/nixos)
-        (builtins.head hostCfg.modules)
-        inputs.disko.nixosModules.disko
-        (inputs.nixpkgs + "/nixos/modules/installer/cd-dvd/installation-cd-graphical-gnome.nix")
-        {
-          networking.hostName = lib.mkForce "${hostName}-iso";
-          image.baseName = lib.mkForce "dotfiles-${hostName}";
-          boot.loader.timeout = lib.mkForce 10;
-        }
-      ];
-    })
-    .config
-    .system
-    .build
-    .isoImage;
 in {
   imports = [
     # keep-sorted start
@@ -161,20 +122,5 @@ in {
   flake = {
     homeModules.default = homeModule;
     homeConfigurations = mkAllHomeConfigs;
-  };
-
-  # ── ISO images (per-system) ──────────────────────────────────────────────
-  perSystem = {system, ...}: let
-    hostsForSystem =
-      lib.filterAttrs (_: h: h.system == system) hosts;
-  in {
-    packages =
-      lib.mapAttrs' (
-        hostName: hostCfg:
-          lib.nameValuePair "iso-${hostName}" (mkIso {
-            inherit hostName hostCfg system;
-          })
-      )
-      hostsForSystem;
   };
 }

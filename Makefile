@@ -1,4 +1,4 @@
-.PHONY: help rebuild home iso check fmt clean
+.PHONY: help rebuild home check fmt clean
 MAKEFLAGS += --no-print-directory
 .DEFAULT_GOAL := help
 
@@ -9,7 +9,7 @@ USER ?= $(shell whoami)
 # ── Positional shorthand: `make rebuild laptop` ──────────────────────────
 CMD := $(firstword $(MAKECMDGOALS))
 ARG := $(word 2,$(MAKECMDGOALS))
-ifneq ($(filter rebuild home iso,$(CMD)),)
+ifneq ($(filter rebuild home,$(CMD)),)
   ifeq ($(HOST),$(shell hostname))
     ifneq ($(ARG),)
       HOST := $(ARG)
@@ -33,8 +33,6 @@ rebuild: _need-host ## NixOS rebuild switch
 home: _need-host ## Home Manager switch
 	home-manager switch --flake ".#$(USER)@$(HOST)"
 
-iso: _need-host ## Build installer ISO
-	nix build ".#iso-$(HOST)"
 
 check: ## Flake check (all systems)
 	nix flake check --all-systems
