@@ -191,6 +191,7 @@ sudo reboot
 |---|---|---|
 | **Validate** | Push / PR | `nix flake check` + flake input validation |
 | **Format** | Push / PR | `nix fmt` via treefmt → auto-PR + merge on push |
+| **Release ISO** | Tag `v*` / manual | Build installer ISO → GitHub Release with checksums |
 | **Update flake inputs** | Weekly (Sun) | `update-flake-lock` → auto-PR + merge |
 | **Update submodules** | Daily | `git submodule update --remote` → auto-PR + merge |
 | **Dependabot** | Weekly | Keep GitHub Actions versions current |
