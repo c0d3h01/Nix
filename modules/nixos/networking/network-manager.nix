@@ -3,15 +3,13 @@
   # systemd-resolved for DNS caching and DNS-over-TLS
   services.resolved = {
     enable = true;
-    settings.Resolve = {
-      DNSSEC = "allow-downgrade";
-      # DNS-over-TLS for privacy — falls back to plaintext if unsupported
-      DNSOverTLS = "opportunistic";
-      FallbackDNS = [
-        "1.1.1.1#cloudflare-dns.com"
-        "9.9.9.9#dns.quad9.net"
-      ];
-    };
+    dnssec = "allow-downgrade";
+    # DNS-over-TLS for privacy — falls back to plaintext if unsupported
+    dnsovertls = "opportunistic";
+    fallbackDns = [
+      "1.1.1.1#cloudflare-dns.com"
+      "9.9.9.9#dns.quad9.net"
+    ];
   };
 
   networking.networkmanager = {
