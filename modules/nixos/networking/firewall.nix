@@ -1,10 +1,6 @@
-{lib, ...}: {
+{lib, pkgs, ...}: {
   networking = {
-    nftables.enable = true;
-
     firewall = {
-      enable = true;
-
       allowedTCPPorts = [
         22 # SSH
         80 # HTTP
@@ -17,11 +13,17 @@
         59010
         59011
       ];
-
-      logReversePathDrops = true;
-      logRefusedConnections = false;
-
+      backend = "firewalld";
       checkReversePath = lib.mkForce "loose";
+      logRefusedConnections = false;
+      logReversePathDrops = true;
     };
+    nftables.enable = true;
+  };
+
+  services.firewalld = {
+    enable = true;
+    package = pkgs.firewalld-gui;
+    settings.FirewallBackend = "nftables";
   };
 }
