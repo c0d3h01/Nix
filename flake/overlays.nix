@@ -2,9 +2,11 @@
   inherit (inputs.nixpkgs) lib;
   overlays = [
     (final: prev: {
-      xorg = prev.xorg // {
-        lndir = prev.lndir;
-      };
+      xorg =
+        prev.xorg
+        // {
+          inherit (prev) lndir;
+        };
     })
     inputs.nix-openclaw.overlays.default
   ];
