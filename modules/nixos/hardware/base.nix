@@ -62,6 +62,5 @@
     daemonSettings.EspLocation = config.boot.loader.efi.efiSysMountPoint;
   };
 
-  services.acpid.enable = true;
   hardware.acpilight.enable = true;
 }
