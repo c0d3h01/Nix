@@ -10,7 +10,6 @@
     eza
     fd
     file
-    gcc
     gdb
     gnumake
     httpie
