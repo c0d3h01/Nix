@@ -1,8 +1,8 @@
 {
   imports = [
-    ./docker.nix
     ./libvirt.nix
     ./ollama.nix
+    ./podman.nix
     ./wireshark.nix
   ];
 }
