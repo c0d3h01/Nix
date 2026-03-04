@@ -1,7 +1,9 @@
+# Purpose: User account, locale, hostname, and developer environment base config
 {
   lib,
   pkgs,
   hostConfig,
+  hostProfile,
   ...
 }: {
   networking.hostName = hostConfig.hostname;
@@ -25,10 +27,29 @@
 
   environment.localBinInPath = true;
 
-  programs.zsh.enable = true;
-  users.defaultUserShell = pkgs.zsh;
+  # Developer documentation: full man pages including POSIX and library docs
+  documentation = {
+    dev.enable = true;
+    man.enable = true;
+  };
+
+  environment.systemPackages = with pkgs; [
+    android-tools # adb/fastboot — uaccess rules handled by systemd 258+
+    man-pages
+    man-pages-posix
+  ];
 
   programs.firefox.enable = true;
+
+  # nix-index: provides command-not-found suggestions from nixpkgs
+  programs.nix-index = {
+    enable = true;
+    enableBashIntegration = true;
+    enableZshIntegration = true;
+  };
+
+  programs.zsh.enable = true;
+  users.defaultUserShell = pkgs.zsh;
 
   users.users.${hostConfig.username} = {
     isNormalUser = true;
@@ -37,10 +58,15 @@
     shell = pkgs.zsh;
 
     extraGroups = [
-      "wheel"
-      "networkmanager"
-      "video"
+      "adbusers" # Android USB debugging
       "audio"
+      "dialout" # Serial ports (USB-UART, Arduino, etc.)
+      "input" # Direct input device access
+      "kvm" # KVM hardware acceleration for VMs
+      "networkmanager"
+      "plugdev" # USB peripherals (programmers, debug probes)
+      "video"
+      "wheel"
     ];
   };
 }
