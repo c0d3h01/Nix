@@ -1,7 +1,4 @@
 #!/usr/bin/env bash
-# Purpose: Partition, format, and mount a NixOS disk with Btrfs subvolumes.
-#          Uses GPT partition labels so NixOS fileSystems config never needs
-#          device-path changes across different machines/reinstalls.
 #
 # Usage:   sudo ./scripts/partition.sh /dev/nvme0n1   (or /dev/sda, etc.)
 #
@@ -19,7 +16,6 @@
 
 set -euo pipefail
 
-# ── Argument handling ─────────────────────────────────────────────────────
 DISK="${1:-}"
 MNT="${2:-/mnt}"
 SWAP_SIZE="${SWAP_SIZE:-8G}"
@@ -46,7 +42,6 @@ if [[ ! -b $DISK ]]; then
   exit 1
 fi
 
-# ── Confirmation ──────────────────────────────────────────────────────────
 echo "WARNING: This will DESTROY all data on ${DISK}"
 echo ""
 echo "  Partition layout:"
@@ -60,12 +55,10 @@ if [[ $confirm != "yes" ]]; then
   exit 1
 fi
 
-# ── Unmount anything on target ────────────────────────────────────────────
 echo ":: Unmounting any existing mounts on ${DISK}..."
 umount -R "$MNT" 2>/dev/null || true
 swapoff "${DISK}"* 2>/dev/null || true
 
-# ── Partition ─────────────────────────────────────────────────────────────
 echo ":: Partitioning ${DISK}..."
 sgdisk --zap-all "$DISK"
 
@@ -75,12 +68,10 @@ sgdisk \
   --new=3:0:0 --typecode=3:8300 --change-name=3:nixos-root \
   "$DISK"
 
-# Wait for kernel to re-read partition table
 sleep 1
 partprobe "$DISK"
 sleep 1
 
-# ── Resolve partition paths from labels ───────────────────────────────────
 wait_for_label() {
   local label="$1" attempts=0
   while [[ ! -e "/dev/disk/by-partlabel/${label}" ]] && ((attempts < 20)); do
@@ -101,14 +92,12 @@ PART_BOOT="/dev/disk/by-partlabel/nixos-boot"
 PART_SWAP="/dev/disk/by-partlabel/nixos-swap"
 PART_ROOT="/dev/disk/by-partlabel/nixos-root"
 
-# ── Format ────────────────────────────────────────────────────────────────
 echo ":: Formatting partitions..."
 
 mkfs.fat -F 32 -n NIXBOOT "$PART_BOOT"
 mkswap -L nixos-swap "$PART_SWAP"
 mkfs.btrfs -f -L nixos-root "$PART_ROOT"
 
-# ── Create Btrfs subvolumes ──────────────────────────────────────────────
 echo ":: Creating Btrfs subvolumes..."
 
 mount "$PART_ROOT" "$MNT"
@@ -119,7 +108,6 @@ btrfs subvolume create "${MNT}/@tmp"
 btrfs subvolume create "${MNT}/@log"
 umount "$MNT"
 
-# ── Mount everything ─────────────────────────────────────────────────────
 echo ":: Mounting filesystems..."
 
 BTRFS_OPTS="noatime,compress=zstd:3,ssd,discard=async,space_cache=v2"
@@ -137,7 +125,6 @@ mount -o umask=0077 "$PART_BOOT" "${MNT}/boot"
 
 swapon "$PART_SWAP"
 
-# ── Summary ───────────────────────────────────────────────────────────────
 echo ""
 echo "Done! Partition layout:"
 lsblk -o NAME,SIZE,FSTYPE,LABEL,MOUNTPOINT "$DISK"
