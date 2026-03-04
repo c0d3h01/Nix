@@ -8,7 +8,6 @@ INSTALL_FLAKE ?= github:c0d3h01/nix-dotfiles#$(HOST)
 ROOT_DEV ?= /dev/nvme0n1p3
 EFI_DEV ?= /dev/nvme0n1p1
 MNT ?= /mnt
-SWAP_DEV ?= /dev/nvme0n1p2
 USER ?= $(shell whoami)
 
 # ── Positional shorthand: `make rebuild laptop` ──────────────────────────
@@ -51,7 +50,7 @@ install-disko: _need-host ## Disko destroy/format/mount for INSTALL_FLAKE (DESTR
 install-nixos: _need-host ## Run nixos-install for INSTALL_FLAKE
 	sudo nixos-install --flake "$(INSTALL_FLAKE)" --no-root-passwd
 
-troubleshoot-mount: ## Mount BTRFS subvolumes + EFI and enable swap for rescue
+troubleshoot-mount: ## Mount BTRFS subvolumes + EFI for rescue
 	sudo mount -t btrfs -o subvol=/@ "$(ROOT_DEV)" "$(MNT)"
 	sudo mkdir -p "$(MNT)/home" "$(MNT)/nix" "$(MNT)/var/tmp" "$(MNT)/var/log" "$(MNT)/boot"
 	sudo mount -t btrfs -o subvol=/@home "$(ROOT_DEV)" "$(MNT)/home"
@@ -59,7 +58,6 @@ troubleshoot-mount: ## Mount BTRFS subvolumes + EFI and enable swap for rescue
 	sudo mount -t btrfs -o subvol=/@tmp "$(ROOT_DEV)" "$(MNT)/var/tmp"
 	sudo mount -t btrfs -o subvol=/@log "$(ROOT_DEV)" "$(MNT)/var/log"
 	sudo mount "$(EFI_DEV)" "$(MNT)/boot"
-	@if [ -n "$(SWAP_DEV)" ]; then sudo swapon "$(SWAP_DEV)"; fi
 
 troubleshoot-enter: troubleshoot-mount ## Enter installed NixOS environment via nixos-enter
 	sudo nixos-enter --root "$(MNT)"
