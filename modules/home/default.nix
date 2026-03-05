@@ -5,15 +5,23 @@
   ...
 }: {
   imports = [
-    ./cli
-    ./core
-    ./dev
-    ./media
-    ./shell
-    ./terminal
+    ./bash.nix
+    ./dircolors.nix
+    ./direnv.nix
+    ./dotfiles.nix
+    ./gh.nix
+    ./neovim.nix
+    ./nixgl.nix
+    ./openclaw.nix
+    ./secrets.nix
+    ./spicetify.nix
+    ./tmux.nix
+    ./tools.nix
+    ./xdg.nix
+    ./zoxide.nix
+    ./zsh.nix
   ];
 
-  programs.home-manager.enable = true;
   home = {
     inherit (userConfig) username;
     homeDirectory =
@@ -23,5 +31,13 @@
 
     stateVersion = "25.11";
     enableNixpkgsReleaseCheck = false;
+
+    activation.updateDotfilesSubmodules =
+      config.lib.dag.entryAfter ["writeBoundary"] ''
+        DOTFILES_DIR="$HOME/.dotfiles"
+        if [ -d "$DOTFILES_DIR/.git" ]; then
+          ${pkgs.git}/bin/git -C "$DOTFILES_DIR" submodule update --init --recursive 2>/dev/null || true
+        fi
+      '';
   };
 }
