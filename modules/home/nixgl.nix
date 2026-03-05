@@ -12,9 +12,7 @@
     ++ lib.optionals (nixglPkgs ? nixVulkanIntel) [nixglPkgs.nixVulkanIntel];
 
   defaultWrapper =
-    if nixglPkgs ? nixGLIntel
-    then nixglPkgs.nixGLIntel
-    else null;
+    nixglPkgs.nixGLIntel or null;
 
   nixGLAutoWrapper =
     lib.optional (defaultWrapper != null)

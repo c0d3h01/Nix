@@ -32,12 +32,11 @@
     stateVersion = "25.11";
     enableNixpkgsReleaseCheck = false;
 
-    activation.updateDotfilesSubmodules =
-      config.lib.dag.entryAfter ["writeBoundary"] ''
-        DOTFILES_DIR="$HOME/.dotfiles"
-        if [ -d "$DOTFILES_DIR/.git" ]; then
-          ${pkgs.git}/bin/git -C "$DOTFILES_DIR" submodule update --init --recursive 2>/dev/null || true
-        fi
-      '';
+    activation.updateDotfilesSubmodules = config.lib.dag.entryAfter ["writeBoundary"] ''
+      DOTFILES_DIR="$HOME/.dotfiles"
+      if [ -d "$DOTFILES_DIR/.git" ]; then
+        ${pkgs.git}/bin/git -C "$DOTFILES_DIR" submodule update --init --recursive 2>/dev/null || true
+      fi
+    '';
   };
 }

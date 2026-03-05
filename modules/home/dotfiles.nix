@@ -4,7 +4,7 @@
   userConfig,
   ...
 }: let
-  dotfiles = inputs.dotfiles;
+  inherit (inputs) dotfiles;
   isWorkstation = userConfig.workstation or false;
 
   configDirs =
