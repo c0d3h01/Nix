@@ -17,6 +17,8 @@
     nix-openclaw.url = "github:openclaw/nix-openclaw";
     nixgl.url = "github:c0d3h01/nixGL";
     nixgl.inputs.nixpkgs.follows = "nixpkgs";
+    nur.url = "github:nix-community/NUR";
+    nur.inputs.nixpkgs.follows = "nixpkgs";
     dotfiles.url = "github:c0d3h01/dotfiles";
     dotfiles.flake = false;
   };
