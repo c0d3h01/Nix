@@ -16,7 +16,10 @@
       # On NixOS this is a no-op; on other distros it prefixes the binary
       # with nixGLIntel so it picks up the host GL/Vulkan stack.
       wrapWithNixGL = pkg: binName: let
-        bin = if binName != null then binName else pkg.pname or (lib.getName pkg);
+        bin =
+          if binName != null
+          then binName
+          else pkg.pname or (lib.getName pkg);
         nixglPkgs = final.nixgl or {};
       in
         if isNixOS || !(nixglPkgs ? nixGLIntel)
