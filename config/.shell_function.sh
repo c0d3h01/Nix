@@ -52,7 +52,7 @@ mkcd() {
     echo "Usage: mkcd <dir>" >&2
     return 1
   fi
-  mkdir -p "$1" && cd "$1"
+  mkdir -p "$1" && cd "$1" || return
 }
 
 # Smart make
