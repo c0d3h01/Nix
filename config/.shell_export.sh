@@ -1,4 +1,4 @@
-#!/usr/bin/env zsh
+#!/usr/bin/env bash
 
 export EDITOR="nvim"
 export VISUAL="nvim"
@@ -21,7 +21,9 @@ export XDG_STATE_HOME="${XDG_STATE_HOME:-$HOME/.local/state}"
 
 export LESS="-R -F -X -i -J --tabs=4"
 export LESSHISTFILE="${XDG_STATE_HOME}/less/history"
-[[ -d ${LESSHISTFILE:h} ]] || mkdir -p "${LESSHISTFILE:h}"
+_lesshist_dir="$(dirname "$LESSHISTFILE")"
+[[ -d $_lesshist_dir ]] || mkdir -p "$_lesshist_dir"
+unset _lesshist_dir
 
 # export FZF_DEFAULT_OPTS_FILE="$XDG_CONFIG_HOME/fzf/fzfrc"
 # export FZF_DEFAULT_COMMAND='fd --type f --hidden --follow --exclude .git'
@@ -38,7 +40,7 @@ export CFLAGS="${CFLAGS:--Wall -Wextra -O2 -pipe}"
 export CXXFLAGS="${CXXFLAGS:-$CFLAGS}"
 export CMAKE_EXPORT_COMPILE_COMMANDS=1
 export CMAKE_GENERATOR="${CMAKE_GENERATOR:-Ninja}"
-if (($ + commands[ccache])); then
+if command -v ccache >/dev/null 2>&1; then
   export USE_CCACHE=1
   export CCACHE_DIR="${XDG_CACHE_HOME}/ccache"
   add_to_path "/usr/lib/ccache/bin"
@@ -58,6 +60,7 @@ export RUSTUP_HOME="${RUSTUP_HOME:-$HOME/.rustup}"
 export CARGO_INCREMENTAL=1
 export CARGO_NET_GIT_FETCH_WITH_CLI=true
 add_to_path "$CARGO_HOME/bin"
+# shellcheck disable=SC1091
 [[ -f "$CARGO_HOME/env" ]] && source "$CARGO_HOME/env"
 
 export PYTHONDONTWRITEBYTECODE=1
@@ -66,14 +69,18 @@ export PIP_REQUIRE_VIRTUALENV=1
 export PIPENV_VENV_IN_PROJECT=1
 export VIRTUAL_ENV_DISABLE_PROMPT=1
 export PYTHON_HISTORY="${XDG_STATE_HOME}/python/history"
-[[ -d ${PYTHON_HISTORY:h} ]] || mkdir -p "${PYTHON_HISTORY:h}"
+_python_history_dir="$(dirname "$PYTHON_HISTORY")"
+[[ -d $_python_history_dir ]] || mkdir -p "$_python_history_dir"
+unset _python_history_dir
 export UV_CACHE_DIR="${XDG_CACHE_HOME}/uv"
 export POETRY_HOME="$HOME/.poetry"
 export POETRY_VIRTUALENVS_IN_PROJECT=true
 add_to_path "$POETRY_HOME/bin"
 
 export NODE_REPL_HISTORY="${XDG_STATE_HOME}/node/history"
-[[ -d ${NODE_REPL_HISTORY:h} ]] || mkdir -p "${NODE_REPL_HISTORY:h}"
+_node_history_dir="$(dirname "$NODE_REPL_HISTORY")"
+[[ -d $_node_history_dir ]] || mkdir -p "$_node_history_dir"
+unset _node_history_dir
 export NPM_CONFIG_USERCONFIG="$XDG_CONFIG_HOME/npm/npmrc"
 export NPM_CONFIG_CACHE="${XDG_CACHE_HOME}/npm"
 export NPM_CONFIG_INIT_AUTHOR_NAME="c0d3h01"
@@ -179,9 +186,12 @@ add_to_path "$HOME/.avm/bin"
 add_to_path "$HOME/.foundry/bin"
 
 export GIT_PAGER="delta"
-((!$ + commands[delta])) && export GIT_PAGER="less"
+if ! command -v delta >/dev/null 2>&1; then
+  export GIT_PAGER="less"
+fi
 
-export GPG_TTY="$(tty)"
+GPG_TTY="$(tty)"
+export GPG_TTY
 export GNUPGHOME="${XDG_DATA_HOME}/gnupg"
 
 export SSH_AUTH_SOCK="${SSH_AUTH_SOCK:-$(gpgconf --list-dirs agent-ssh-socket 2>/dev/null)}"

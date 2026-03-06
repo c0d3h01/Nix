@@ -71,7 +71,6 @@
                 "*.sh"
                 "*.bashrc"
                 "*.bash_profile"
-                "*.zshrc"
                 "*.envrc"
                 "*.envrc.private-template"
               ];
