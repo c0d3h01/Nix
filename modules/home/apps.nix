@@ -18,6 +18,7 @@
     stow
     bat
     imagemagick
+    mise
   ];
 
   apps = [];
