@@ -39,7 +39,7 @@
     man-pages-posix
   ];
 
-  programs.firefox.enable = true;
+  programs.chromium.enable = true;
 
   # nix-index: provides command-not-found suggestions from nixpkgs
   programs.nix-index = {

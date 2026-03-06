@@ -5,7 +5,7 @@
   ...
 }: {
   nix = {
-    channel.enable = lib.mkDefault false;
+    channel.enable = lib.mkDefault true;
 
     registry = lib.mapAttrs (_: flake: {inherit flake;}) inputs;
 
@@ -18,7 +18,7 @@
       min-free = 1024 * 1024 * 1024; # 1 GiB
       max-free = 5 * 1024 * 1024 * 1024; # 5 GiB
 
-      auto-optimise-store = true;
+      auto-optimise-store = false;
 
       max-jobs = 4;
       cores = 2;
@@ -44,7 +44,7 @@
 
       show-trace = true;
       log-lines = 30;
-      keep-going = true;
+      keep-going = false;
       warn-dirty = false;
 
       http-connections = 25;
