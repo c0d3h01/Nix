@@ -27,6 +27,6 @@
 
   dotfiles.home.features = {
     spicetify.enable = true;
-    openclaw.enable = true;
+    openclaw.enable = false;
   };
 }
