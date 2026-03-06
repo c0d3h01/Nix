@@ -1,0 +1,15 @@
+[build]
+jobs = 4
+rustc-wrapper = "sccache"
+
+[profile.dev]
+opt-level = 1
+codegen-units = 16
+debug = 0
+
+[profile.release]
+lto = "thin"
+
+[target.x86_64-unknown-linux-gnu]
+linker = "clang"
+rustflags = ["-C", "link-arg=-fuse-ld=lld", "-C", "target-cpu=native"]
