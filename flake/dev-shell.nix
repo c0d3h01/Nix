@@ -12,8 +12,6 @@
       motd = "";
 
       packages = [
-        pkgs.nixd
-        pkgs.nil
         pkgs.gnumake
         pkgs.gitMinimal
         pkgs.age
