@@ -5,9 +5,10 @@
     ./hardware
     ./networking
     ./nix
-    ./profile.nix
     ./security
     ./services
     ./system
+    ./profile.nix
+    ./secrets.nix
   ];
 }
