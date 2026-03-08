@@ -4,42 +4,38 @@
     enableZshIntegration = true;
     enableBashIntegration = true;
 
-    # Use fd as the default finder
     defaultCommand = "fd --type f --hidden --follow --exclude .git";
+
     fileWidgetCommand = "fd --type f --hidden --follow --exclude .git";
     changeDirWidgetCommand = "fd --type d --hidden --follow --exclude .git";
 
     defaultOptions = [
-      "--height=40%"
-      "--layout=reverse"
-      "--border=rounded"
-      "--info=inline"
-      "--margin=1"
-      "--padding=1"
+      # Preview window layout
+      "--preview-window=right:55%:wrap:border-sharp"
+      "--preview='${pkgs.bat}/bin/bat --color=always --style=numbers --line-range=:500 {} 2>/dev/null || cat {}'"
+
+      # Navigation
+      "--bind=ctrl-a:first"
+      "--bind=ctrl-g:last"
+
+      # Preview scroll
+      "--bind=ctrl-j:preview-down"
+      "--bind=ctrl-k:preview-up"
+      "--bind=ctrl-u:preview-top"
+      "--bind=ctrl-b:preview-bottom"
+
+      # Gruvbox Dark color scheme
+      "--color=bg+:#3c3836,bg:#32302f,spinner:#fb4934,hl:#928374"
+      "--color=fg:#ebdbb2,header:#928374,info:#8ec07c,pointer:#fb4934"
+      "--color=marker:#fb4934,fg+:#ebdbb2,prompt:#fb4934,hl+:#fb4934"
     ];
 
-    # Catppuccin Mocha inspired colors
-    colors = {
-      fg = "#cdd6f4";
-      "fg+" = "#cdd6f4";
-      bg = "#1e1e2e";
-      "bg+" = "#313244";
-      hl = "#f38ba8";
-      "hl+" = "#f38ba8";
-      info = "#cba6f7";
-      prompt = "#cba6f7";
-      pointer = "#f5e0dc";
-      marker = "#b4befe";
-      spinner = "#f5e0dc";
-      header = "#f38ba8";
-    };
-
     fileWidgetOptions = [
-      "--preview '${pkgs.bat}/bin/bat --color=always --style=numbers --line-range=:500 {} 2>/dev/null || cat {}'"
+      "--preview='${pkgs.bat}/bin/bat --color=always --style=numbers --line-range=:500 {} 2>/dev/null || cat {}'"
     ];
 
     changeDirWidgetOptions = [
-      "--preview '${pkgs.eza}/bin/eza --tree --color=always --icons --level=2 {} 2>/dev/null'"
+      "--preview='${pkgs.eza}/bin/eza --tree --color=always --icons --level=2 {} 2>/dev/null'"
     ];
   };
 }

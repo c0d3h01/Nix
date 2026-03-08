@@ -7,6 +7,7 @@
     nerd-fonts.fira-code
     nerd-fonts.hack
     nerd-fonts.symbols-only
+    cascadia-code
 
     # Base fonts
     noto-fonts
