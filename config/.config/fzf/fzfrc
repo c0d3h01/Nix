@@ -1,9 +1,0 @@
-# Preview pane: wrapped text, sharp border, right-side split.
---preview-window=right,55%,wrap,border-sharp
-
---bind=ctrl-a:first,ctrl-g:last
---bind=ctrl-j:preview-down,ctrl-k:preview-up
---bind=ctrl-t:preview-top,ctrl-b:preview-bottom
-
---walker-skip=.git
---color=bg+:#3c3836,bg:#32302f,spinner:#fb4934,hl:#928374,fg:#ebdbb2,header:#928374,info:#8ec07c,pointer:#fb4934,marker:#fb4934,fg+:#ebdbb2,prompt:#fb4934,hl+:#fb4934

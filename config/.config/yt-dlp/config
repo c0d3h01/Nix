@@ -1,4 +1,0 @@
-# Use Brave cookies for authenticated downloads.
---cookies-from-browser brave-browser
-# Remove SponsorBlock segments when metadata is available.
---sponsorblock-remove all

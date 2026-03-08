@@ -1,2 +1,0 @@
-Server = https://mirrors.nxtgen.com/archlinux-mirror/$repo/os/$arch
-Server = https://mirror.sahil.world/archlinux/$repo/os/$arch
