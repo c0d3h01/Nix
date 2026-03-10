@@ -10,7 +10,18 @@
   ];
 
   boot = {
+    plymouth.enable = true;
+    consoleLogLevel = 0;
+    tmp.cleanOnBoot = true;
+
     initrd = {
+      verbose = false;
+      systemd.enable = true;
+      compressor = "zstd";
+      compressorArgs = ["-19" "-T0"];
+
+      supportedFilesystems = ["ntfs" "exfat" "vfat" "zfs"];
+
       availableKernelModules = [
         "nvme"
         "ahci"
@@ -18,6 +29,7 @@
         "usb_storage"
         "sd_mod"
       ];
+
       kernelModules = [
         "nvme"
         "xhci_pci"
@@ -26,9 +38,6 @@
         "sd_mod"
         "dm_mod"
       ];
-      systemd.enable = true;
-      compressor = "zstd";
-      compressorArgs = ["-19" "-T0"];
     };
 
     kernelModules = lib.mkMerge [
@@ -36,17 +45,10 @@
       (lib.mkIf (config.hardware.cpu.intel.updateMicrocode or false) ["kvm-intel"])
     ];
 
-    kernelParams = lib.mkDefault [
+    kernelParams = [
       "mitigations=off"
+      "quiet"
     ];
-
-    tmp = {
-      useTmpfs = true;
-      tmpfsSize = "60%";
-      tmpfsHugeMemoryPages = "within_size";
-    };
-
-    supportedFilesystems = ["ntfs" "exfat" "vfat"];
   };
 
   hardware = {
