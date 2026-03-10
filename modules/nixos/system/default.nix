@@ -2,12 +2,25 @@
   imports = [
     ./audio.nix
     ./diff.nix
+    ./firewalld.nix
     ./fonts.nix
+    ./gnome.nix
+    ./gnupg.nix
+    ./networkManager.nix
     ./nix-ld.nix
+    ./nix.nix
+    ./nixpkgs.nix
     ./oomd.nix
+    ./openssh.nix
+    ./packages.nix
+    ./pam.nix
+    ./plasma.nix
     ./printing.nix
     ./scheduler.nix
+    ./secrets.nix
     ./user.nix
+    ./wait-online.nix
+    ./xfce.nix
     ./xserver.nix
   ];
 }

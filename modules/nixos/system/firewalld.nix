@@ -4,7 +4,14 @@
   ...
 }: {
   networking = {
+    nftables.enable = true;
+
     firewall = {
+      backend = "firewalld";
+      checkReversePath = lib.mkForce "loose";
+      logRefusedConnections = false;
+      logReversePathDrops = true;
+
       allowedTCPPorts = [
         22 # SSH
         80 # HTTP
@@ -13,16 +20,12 @@
         59010 # custom
         59011 # custom
       ];
+
       allowedUDPPorts = [
         59010
         59011
       ];
-      backend = "firewalld";
-      checkReversePath = lib.mkForce "loose";
-      logRefusedConnections = false;
-      logReversePathDrops = true;
     };
-    nftables.enable = true;
   };
 
   services.firewalld = {

@@ -14,6 +14,19 @@
     daemonCPUSchedPolicy = lib.mkDefault "batch";
     daemonIOSchedClass = lib.mkDefault "idle";
 
+    gc = {
+      automatic = true;
+      dates = lib.mkDefault "daily";
+      randomizedDelaySec = lib.mkDefault "45min";
+      options = lib.mkDefault "--delete-older-than 7d";
+    };
+
+    optimise = {
+      automatic = true;
+      dates = lib.mkDefault "Sun 04:00";
+      randomizedDelaySec = lib.mkDefault "30min";
+    };
+
     settings = {
       min-free = 1024 * 1024 * 1024; # 1 GiB
       max-free = 5 * 1024 * 1024 * 1024; # 5 GiB
