@@ -20,14 +20,25 @@
       compressor = "zstd";
       compressorArgs = ["-19" "-T0"];
 
-      supportedFilesystems = ["ntfs" "exfat" "vfat" "zfs"];
+      supportedFilesystems = [
+        "btrfs"
+        "ext4"
+        "fat32"
+        "ntfs"
+        "exfat"
+        "vfat"
+        "xfs"
+        "zfs"
+      ];
 
       availableKernelModules = [
         "nvme"
         "ahci"
         "xhci_pci"
+        "usbhid"
         "usb_storage"
         "sd_mod"
+        "sr_mod"
       ];
 
       kernelModules = [
@@ -54,6 +65,8 @@
   hardware = {
     cpu.amd.updateMicrocode = lib.mkDefault true;
     enableRedistributableFirmware = true;
+    enableAllFirmware = true;
+    sensor.iio.enable = lib.mkDefault true;
   };
 
   networking.useDHCP = lib.mkDefault true;
@@ -63,6 +76,10 @@
     enable = true;
     daemonSettings.EspLocation = config.boot.loader.efi.efiSysMountPoint;
   };
+
+  # Device mounting and smartcard daemons
+  services.udisks2.enable = true;
+  services.pcscd.enable = true;
 
   hardware.acpilight.enable = true;
 }

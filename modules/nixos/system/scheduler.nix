@@ -1,24 +1,30 @@
 {
+  config,
   lib,
   hostProfile,
   ...
 }: let
+  inherit (lib) mkIf mkEnableOption mkMerge mkDefault;
   inherit (hostProfile) isWorkstation;
-in
-  lib.mkMerge [
+  cfg = config.dotfiles.nixos.system.scheduler;
+in {
+  options.dotfiles.nixos.system.scheduler.enable = mkEnableOption "scx and irqbalance schedulers";
+
+  config = mkIf cfg.enable (mkMerge [
     {
-      services.irqbalance.enable = lib.mkDefault isWorkstation;
+      services.irqbalance.enable = mkDefault isWorkstation;
 
       services.scx = {
         enable = isWorkstation;
-        scheduler = lib.mkDefault "scx_lavd";
-        extraArgs = lib.mkDefault [
+        scheduler = mkDefault "scx_lavd";
+        extraArgs = mkDefault [
           "--performance"
         ];
       };
     }
 
-    (lib.mkIf isWorkstation {
-      systemd.services.scx.serviceConfig.RestartSec = lib.mkDefault 1;
+    (mkIf isWorkstation {
+      systemd.services.scx.serviceConfig.RestartSec = mkDefault 1;
     })
-  ]
+  ]);
+}

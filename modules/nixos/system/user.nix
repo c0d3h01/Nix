@@ -1,4 +1,3 @@
-# Purpose: User account, locale, hostname, and developer environment base config
 {
   lib,
   pkgs,
@@ -42,13 +41,13 @@
     shell = pkgs.zsh;
 
     extraGroups = [
-      "adbusers" # Android USB debugging
+      "adbusers"
       "audio"
-      "dialout" # Serial ports (USB-UART, Arduino, etc.)
-      "input" # Direct input device access
-      "kvm" # KVM hardware acceleration for VMs
+      "dialout"
+      "input"
+      "kvm"
       "networkmanager"
-      "plugdev" # USB peripherals
+      "plugdev"
       "video"
       "wheel"
     ];

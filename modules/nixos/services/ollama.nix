@@ -1,13 +1,24 @@
-{pkgs, ...}: {
-  services.ollama = {
-    enable = true;
-    package = pkgs.ollama-rocm;
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}: let
+  inherit (lib) mkIf mkEnableOption;
+  cfg = config.dotfiles.nixos.services.ollama;
+in {
+  options.dotfiles.nixos.services.ollama.enable = mkEnableOption "Ollama local LLM service";
 
-    environmentVariables = {
-      OLLAMA_GPU_OVERHEAD = "0";
-      HIP_VISIBLE_DEVICES = "0";
+  config = mkIf cfg.enable {
+    services.ollama = {
+      enable = true;
+      package = pkgs.ollama-rocm;
 
-      OLLAMA_NUM_PARALLEL = "1";
+      environmentVariables = {
+        OLLAMA_GPU_OVERHEAD = "0";
+        HIP_VISIBLE_DEVICES = "0";
+        OLLAMA_NUM_PARALLEL = "1";
+      };
     };
   };
 }

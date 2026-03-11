@@ -1,36 +1,44 @@
 {
+  config,
   lib,
   pkgs,
   ...
-}: {
-  networking = {
-    nftables.enable = true;
+}: let
+  inherit (lib) mkIf mkEnableOption mkForce;
+  cfg = config.dotfiles.nixos.system.firewalld;
+in {
+  options.dotfiles.nixos.system.firewalld.enable = mkEnableOption "Firewalld with nftables backend";
 
-    firewall = {
-      backend = "firewalld";
-      checkReversePath = lib.mkForce "loose";
-      logRefusedConnections = false;
-      logReversePathDrops = true;
+  config = mkIf cfg.enable {
+    networking = {
+      nftables.enable = true;
 
-      allowedTCPPorts = [
-        22 # SSH
-        80 # HTTP
-        443 # HTTPS
-        8080 # dev server
-        59010 # custom
-        59011 # custom
-      ];
+      firewall = {
+        backend = "firewalld";
+        checkReversePath = mkForce "loose";
+        logRefusedConnections = false;
+        logReversePathDrops = true;
 
-      allowedUDPPorts = [
-        59010
-        59011
-      ];
+        allowedTCPPorts = [
+          22
+          80
+          443
+          8080
+          59010
+          59011
+        ];
+
+        allowedUDPPorts = [
+          59010
+          59011
+        ];
+      };
     };
-  };
 
-  services.firewalld = {
-    enable = true;
-    package = pkgs.firewalld-gui;
-    settings.FirewallBackend = "nftables";
+    services.firewalld = {
+      enable = true;
+      package = pkgs.firewalld-gui;
+      settings.FirewallBackend = "nftables";
+    };
   };
 }

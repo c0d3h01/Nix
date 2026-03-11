@@ -4,10 +4,13 @@
   config,
   ...
 }: let
-  inherit (lib) mkIf mkMerge mkAfter;
+  inherit (lib) mkIf mkEnableOption mkMerge mkAfter;
+  cfg = config.dotfiles.nixos.system.diff;
 in {
+  options.dotfiles.nixos.system.diff.enable = mkEnableOption "NixOS system diff on switch";
+
   config = mkMerge [
-    {
+    (mkIf cfg.enable {
       system.activationScripts.diff = {
         text = ''
           if [[ -e /run/current-system ]]; then
@@ -17,13 +20,13 @@ in {
           fi
         '';
       };
-    }
+    })
 
-    (mkIf pkgs.stdenv.hostPlatform.isLinux {
+    (mkIf (cfg.enable && pkgs.stdenv.hostPlatform.isLinux) {
       system.activationScripts.diff.supportsDryActivation = true;
     })
 
-    (mkIf pkgs.stdenv.hostPlatform.isDarwin {
+    (mkIf (cfg.enable && pkgs.stdenv.hostPlatform.isDarwin) {
       system.activationScripts.postActivation.text = mkAfter ''
         ${config.system.activationScripts.diff.text}
       '';

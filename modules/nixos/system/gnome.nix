@@ -13,7 +13,7 @@ in {
     services.displayManager.defaultSession = "gnome";
 
     networking.firewall = lib.mkIf config.networking.firewall.enable {
-      allowedTCPPorts = [1716]; # KDE connect port
+      allowedTCPPorts = [1716];
       allowedUDPPorts = [1716];
     };
 
@@ -30,11 +30,10 @@ in {
         gnome-photos
         vlc
         libreoffice-still
-        playerctl # gsconnect play/pause command
-        pamixer # gcsconnect volume control
+        playerctl
+        pamixer
 
         gnomeExtensions.gsconnect
-        # gnomeExtensions.dash-to-dock
       ];
 
       gnome.excludePackages = with pkgs; [

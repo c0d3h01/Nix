@@ -1,29 +1,38 @@
 {
+  config,
+  lib,
   pkgs,
   hostConfig,
   ...
-}: {
-  virtualisation.podman = {
-    enable = true;
+}: let
+  inherit (lib) mkIf mkEnableOption;
+  cfg = config.dotfiles.nixos.services.podman;
+in {
+  options.dotfiles.nixos.services.podman.enable = mkEnableOption "Podman container engine";
 
-    dockerCompat = true;
-    defaultNetwork.settings.dns_enabled = true;
-
-    autoPrune = {
+  config = mkIf cfg.enable {
+    virtualisation.podman = {
       enable = true;
-      dates = "weekly";
-      flags = ["--all" "--volumes"];
+
+      dockerCompat = true;
+      defaultNetwork.settings.dns_enabled = true;
+
+      autoPrune = {
+        enable = true;
+        dates = "weekly";
+        flags = ["--all" "--volumes"];
+      };
     };
-  };
 
-  users.users.${hostConfig.username} = {
-    autoSubUidGidRange = true;
-  };
+    users.users.${hostConfig.username} = {
+      autoSubUidGidRange = true;
+    };
 
-  environment.systemPackages = with pkgs; [
-    podman-compose
-    buildah
-    skopeo
-    lazydocker
-  ];
+    environment.systemPackages = with pkgs; [
+      podman-compose
+      buildah
+      skopeo
+      lazydocker
+    ];
+  };
 }
