@@ -1,6 +1,3 @@
 result
 .direnv
-dotconfigs
-!AGENT.md
 !AGENTS.md
-!modules/home/services/openclaw/documents/AGENTS.md
