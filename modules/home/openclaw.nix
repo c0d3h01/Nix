@@ -9,11 +9,11 @@
 in {
   options.dotfiles.home.features.openclaw.enable = mkEnableOption "OpenClaw";
 
-  imports = [
-    inputs.nix-openclaw.homeManagerModules.openclaw
-  ];
-
   config = mkIf cfg.enable {
+    imports = [
+      inputs.nix-openclaw.homeManagerModules.openclaw
+    ];
+
     programs.openclaw = {
       enable = true;
 
