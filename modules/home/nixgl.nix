@@ -1,12 +1,18 @@
 {
+  config,
   lib,
   pkgs,
+  hostConfig,
   ...
 }: let
-  isNixOS = builtins.pathExists /etc/NIXOS;
-  hasNixGL = !isNixOS && (pkgs ? nixgl) && (pkgs.nixgl ? nixGLIntel);
+  inherit (lib) mkIf mkEnableOption;
+  cfg = config.dotfiles.home.nixgl;
 in {
-  config = lib.mkIf hasNixGL {
-    home.packages = [pkgs.nixgl.nixGLIntel];
+  options.dotfiles.home.nixgl.enable = mkEnableOption "NixGL support for non-NixOS hosts";
+
+  config = mkIf (cfg.enable && !hostConfig.isNixOS) {
+    home.packages = lib.optionals (pkgs ? nixgl && pkgs.nixgl ? nixGLIntel) [
+      pkgs.nixgl.nixGLIntel
+    ];
   };
 }

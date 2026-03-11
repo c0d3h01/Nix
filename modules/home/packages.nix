@@ -1,29 +1,28 @@
 {
-  pkgs,
-  userConfig,
   lib,
+  pkgs,
+  hostConfig,
   ...
 }: let
-  isWorkstation = userConfig.workstation or false;
-
-  cli = with pkgs; [
-    tree
-    glances
-    stow
-    imagemagick
-    mise
-    tldr
-    alejandra
-    nil
-    nixd
-    uv
-    rustup
-    python3
-  ];
-
-  apps = [];
+  inherit (lib) optionals;
+  isWorkstation = hostConfig.workstation or false;
 in {
-  home.packages =
-    cli
-    ++ lib.optionals isWorkstation apps;
+  home.packages = with pkgs;
+    [
+      tree
+      glances
+      stow
+      imagemagick
+      mise
+      tldr
+      alejandra
+      nil
+      nixd
+      uv
+      rustup
+      python3
+    ]
+    ++ optionals isWorkstation [
+      freecad
+    ];
 }

@@ -1,16 +1,29 @@
-{pkgs, ...}: {
-  programs.zsh = {
-    enable = true;
+{
+  config,
+  lib,
+  ...
+}: let
+  inherit (lib) mkIf mkEnableOption;
+  cfg = config.dotfiles.home.shell.zsh;
+in {
+  options.dotfiles.home.shell.zsh.enable = mkEnableOption "Zsh shell";
 
-    initContent = ''
-      ifsource() { [ -f "$1" ] && source "$1"; }
+  config = mkIf cfg.enable {
+    programs.zsh = {
+      enable = true;
 
-      ifsource "${pkgs.zsh-autosuggestions}/share/zsh-autosuggestions/zsh-autosuggestions.zsh"
-      ifsource "${pkgs.zsh-fzf-tab}/share/fzf-tab/fzf-tab.plugin.zsh"
-      ifsource "${pkgs.zsh-fast-syntax-highlighting}/share/zsh-fast-syntax-highlighting/fast-syntax-highlighting.plugin.zsh"
-      fpath+=("${pkgs.zsh-completions}/share/zsh/site-functions")
+      initContent = let
+        inherit (config._module.args) pkgs;
+      in ''
+        ifsource() { [ -f "$1" ] && source "$1"; }
 
-      autoload -Uz compinit && compinit -C
-    '';
+        ifsource "${pkgs.zsh-autosuggestions}/share/zsh-autosuggestions/zsh-autosuggestions.zsh"
+        ifsource "${pkgs.zsh-fzf-tab}/share/fzf-tab/fzf-tab.plugin.zsh"
+        ifsource "${pkgs.zsh-fast-syntax-highlighting}/share/zsh-fast-syntax-highlighting/fast-syntax-highlighting.plugin.zsh"
+        fpath+=("${pkgs.zsh-completions}/share/zsh/site-functions")
+
+        autoload -Uz compinit && compinit -C
+      '';
+    };
   };
 }

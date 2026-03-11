@@ -1,75 +1,81 @@
-{pkgs, ...}: {
-  programs.tmux = {
-    enable = true;
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}: let
+  inherit (lib) mkIf mkEnableOption;
+  cfg = config.dotfiles.home.terminal.tmux;
+in {
+  options.dotfiles.home.terminal.tmux.enable = mkEnableOption "tmux terminal multiplexer";
 
-    plugins = with pkgs; [
-      tmuxPlugins.sensible
-      tmuxPlugins.yank
-      tmuxPlugins.resurrect
-      tmuxPlugins.continuum
-      tmuxPlugins."tmux-fzf"
-    ];
+  config = mkIf cfg.enable {
+    programs.tmux = {
+      enable = true;
 
-    extraConfig = ''
-      # Prefix
-      set -g prefix C-a
-      unbind C-b
-      bind C-a send-prefix
+      plugins = with pkgs; [
+        tmuxPlugins.sensible
+        tmuxPlugins.yank
+        tmuxPlugins.resurrect
+        tmuxPlugins.continuum
+        tmuxPlugins."tmux-fzf"
+      ];
 
-      # Terminal settings
-      set -g default-terminal "tmux-256color"
-      set -ga terminal-overrides ",*256col*:Tc"
-      set -g history-limit 10000
-      set -g mouse on
+      extraConfig = ''
+        set -g prefix C-a
+        unbind C-b
+        bind C-a send-prefix
 
-      # Window and pane settings
-      set -g base-index 1
-      setw -g pane-base-index 1
-      set -g renumber-windows on
-      set -sg escape-time 10
-      set -g focus-events on
+        set -g default-terminal "tmux-256color"
+        set -ga terminal-overrides ",*256col*:Tc"
+        set -g history-limit 10000
+        set -g mouse on
 
-      # Key bindings
-      bind | split-window -h -c "#{pane_current_path}"
-      bind - split-window -v -c "#{pane_current_path}"
-      unbind '"'
-      unbind %
+        set -g base-index 1
+        setw -g pane-base-index 1
+        set -g renumber-windows on
+        set -sg escape-time 10
+        set -g focus-events on
 
-      bind h select-pane -L
-      bind j select-pane -D
-      bind k select-pane -U
-      bind l select-pane -R
+        bind | split-window -h -c "#{pane_current_path}"
+        bind - split-window -v -c "#{pane_current_path}"
+        unbind '"'
+        unbind %
 
-      bind -r H resize-pane -L 5
-      bind -r J resize-pane -D 5
-      bind -r K resize-pane -U 5
-      bind -r L resize-pane -R 5
+        bind h select-pane -L
+        bind j select-pane -D
+        bind k select-pane -U
+        bind l select-pane -R
 
-      bind -n M-1 select-window -t 1
-      bind -n M-2 select-window -t 2
-      bind -n M-3 select-window -t 3
-      bind -n M-4 select-window -t 4
-      bind -n M-5 select-window -t 5
+        bind -r H resize-pane -L 5
+        bind -r J resize-pane -D 5
+        bind -r K resize-pane -U 5
+        bind -r L resize-pane -R 5
 
-      bind r source-file ~/.config/tmux/tmux.conf
+        bind -n M-1 select-window -t 1
+        bind -n M-2 select-window -t 2
+        bind -n M-3 select-window -t 3
+        bind -n M-4 select-window -t 4
+        bind -n M-5 select-window -t 5
 
-      # Copy mode (vi-like)
-      setw -g mode-keys vi
-      bind -T copy-mode-vi v send-keys -X begin-selection
-      bind -T copy-mode-vi y send-keys -X copy-selection-and-cancel
-      bind -T copy-mode-vi y send-keys -X copy-pipe-and-cancel "xclip -selection clipboard"
+        bind r source-file ~/.config/tmux/tmux.conf
 
-      # Status bar
-      set -g status-interval 2
-      set -g status-style bg=colour235,fg=colour136
-      set -g status-left "#[fg=colour232,bg=colour39] #S #[fg=colour39,bg=colour235] "
-      set -g status-right "#[fg=colour136,bg=colour235] %Y-%m-%d %H:%M #[fg=colour232,bg=colour39] #h "
-      set -g status-left-length 50
-      set -g status-right-length 50
-      set -g window-status-current-style fg=colour232,bg=colour39,bold
-      set -g window-status-style fg=colour136,bg=colour235
-      set -g pane-border-style fg=colour238
-      set -g pane-active-border-style fg=colour39
-    '';
+        setw -g mode-keys vi
+        bind -T copy-mode-vi v send-keys -X begin-selection
+        bind -T copy-mode-vi y send-keys -X copy-selection-and-cancel
+        bind -T copy-mode-vi y send-keys -X copy-pipe-and-cancel "xclip -selection clipboard"
+
+        set -g status-interval 2
+        set -g status-style bg=colour235,fg=colour136
+        set -g status-left "#[fg=colour232,bg=colour39] #S #[fg=colour39,bg=colour235] "
+        set -g status-right "#[fg=colour136,bg=colour235] %Y-%m-%d %H:%M #[fg=colour232,bg=colour39] #h "
+        set -g status-left-length 50
+        set -g status-right-length 50
+        set -g window-status-current-style fg=colour232,bg=colour39,bold
+        set -g window-status-style fg=colour136,bg=colour235
+        set -g pane-border-style fg=colour238
+        set -g pane-active-border-style fg=colour39
+      '';
+    };
   };
 }

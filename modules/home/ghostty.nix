@@ -23,21 +23,17 @@ in {
         font-family = "JetBrainsMono Nerd Font";
         font-size = 13.0;
 
-        # Window
         clipboard-read = "allow";
         clipboard-write = "allow";
         confirm-close-surface = false;
         gtk-titlebar = true;
-        # shell-integration = "";
         background-opacity = 0.85;
         background-blur-radius = 20;
 
-        # macOS settings
         macos-non-native-fullscreen = false;
         macos-option-as-alt = true;
         mouse-hide-while-typing = true;
 
-        # Keybindings
         keybind = [
           "super+c=copy_to_clipboard"
           "super+d=new_split:right"

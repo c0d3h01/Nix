@@ -18,7 +18,7 @@
     ./kitty.nix
     ./lazygit.nix
     ./lsd.nix
-    # ./neovim.nix
+    ./neovim.nix
     ./nixgl.nix
     ./nixvim.nix
     ./openclaw.nix

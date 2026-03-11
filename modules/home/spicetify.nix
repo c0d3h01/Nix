@@ -3,7 +3,7 @@
   lib,
   pkgs,
   inputs,
-  userConfig,
+  hostConfig,
   ...
 }: let
   inherit (lib) mkIf mkEnableOption;
@@ -15,7 +15,7 @@ in {
     inputs.spicetify.homeManagerModules.default
   ];
 
-  config.programs.spicetify = mkIf ((userConfig.workstation or false) && cfg.enable) (
+  config.programs.spicetify = mkIf ((hostConfig.workstation or false) && cfg.enable) (
     let
       spicePkgs = inputs.spicetify.legacyPackages.${pkgs.stdenv.hostPlatform.system};
     in {

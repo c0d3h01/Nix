@@ -1,17 +1,27 @@
-{pkgs, ...}: {
-  fonts.fontconfig.enable = true;
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}: let
+  inherit (lib) mkIf mkEnableOption;
+  cfg = config.dotfiles.home.fonts;
+in {
+  options.dotfiles.home.fonts.enable = mkEnableOption "User fonts";
 
-  home.packages = with pkgs; [
-    # Nerd Fonts (patched with icons for terminal/starship/eza)
-    nerd-fonts.jetbrains-mono
-    nerd-fonts.fira-code
-    nerd-fonts.hack
-    nerd-fonts.symbols-only
-    cascadia-code
+  config = mkIf cfg.enable {
+    fonts.fontconfig.enable = true;
 
-    # Base fonts
-    noto-fonts
-    noto-fonts-color-emoji
-    noto-fonts-cjk-sans
-  ];
+    home.packages = with pkgs; [
+      nerd-fonts.jetbrains-mono
+      nerd-fonts.fira-code
+      nerd-fonts.hack
+      nerd-fonts.symbols-only
+      cascadia-code
+
+      noto-fonts
+      noto-fonts-color-emoji
+      noto-fonts-cjk-sans
+    ];
+  };
 }

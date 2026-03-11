@@ -1,43 +1,51 @@
 {
-  programs.vesktop = {
-    enable = true;
-    settings = {
-      # System integration
-      appBadge = false;
-      arRPC = true;
-      checkUpdates = false;
-      customTitleBar = false;
-      disableMinSize = true;
-      minimizeToTray = false;
-      tray = false;
-      staticTitle = true;
-      discordBranch = "stable";
+  config,
+  lib,
+  ...
+}: let
+  inherit (lib) mkIf mkEnableOption;
+  cfg = config.dotfiles.home.features.vesktop;
+in {
+  options.dotfiles.home.features.vesktop.enable = mkEnableOption "Vesktop Discord client";
 
-      # Performance
-      hardwareAcceleration = true;
-      openLinksWithElectron = false; # open links in system browser, not electron
+  config = mkIf cfg.enable {
+    programs.vesktop = {
+      enable = true;
 
-      # Theming
-      splashTheming = true;
-      splashBackground = "#000000";
-      splashColor = "#ffffff";
-      splashAnimationDuration = 500; # ms
+      settings = {
+        appBadge = false;
+        arRPC = true;
+        checkUpdates = false;
+        customTitleBar = false;
+        disableMinSize = true;
+        minimizeToTray = false;
+        tray = false;
+        staticTitle = true;
+        discordBranch = "stable";
 
-      # Window behavior
-      saveWindowState = true; # remember size/position across restarts
-      disableAudioControl = false; # keep OS audio control integration
-    };
+        hardwareAcceleration = true;
+        openLinksWithElectron = false;
 
-    vencord.settings = {
-      autoUpdate = false;
-      autoUpdateNotification = false;
-      useQuickCss = true;
-      enableReactDevtools = false;
-      frameless = false;
-      transparent = false;
-      winCtrlQ = false;
-      disableMinSize = true;
-      winNativeTitleBar = false;
+        splashTheming = true;
+        splashBackground = "#000000";
+        splashColor = "#ffffff";
+        splashAnimationDuration = 500;
+
+        saveWindowState = true;
+        disableAudioControl = false;
+      };
+
+      vencord.settings = {
+        autoUpdate = false;
+        autoUpdateNotification = false;
+        useQuickCss = true;
+        enableReactDevtools = false;
+        frameless = false;
+        transparent = false;
+        winCtrlQ = false;
+        disableMinSize = true;
+        winNativeTitleBar = false;
+      };
     };
   };
 }
