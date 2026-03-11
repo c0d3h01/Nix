@@ -71,10 +71,4 @@
       options = ["umask=0077"];
     };
   };
-
-  # swapDevices = [
-  #   {
-  #     device = "/dev/disk/by-label/nixos-swap";
-  #   }
-  # ];
 }
