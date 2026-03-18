@@ -32,6 +32,7 @@ in {
         libreoffice-still
         playerctl
         pamixer
+        kdePackages.partitionmanager
 
         gnomeExtensions.gsconnect
       ];
