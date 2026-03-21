@@ -32,10 +32,10 @@ help: ## Show this help
 	@echo "  DISK=$(DISK)"
 
 rebuild: _need-host
-	sudo nix $(NIX_EXPERIMENTAL) nixos-rebuild switch --flake ".#$(HOST)"
+	sudo nixos-rebuild switch --flake ".#$(HOST)"
 
 home: _need-host
-	nix $(NIX_EXPERIMENTAL) run home-manager switch --flake ".#$(USER)@$(HOST)"
+	home-manager $(NIX_EXPERIMENTAL) switch --flake ".#$(USER)@$(HOST)"
 
 partition:
 	sudo nix $(NIX_EXPERIMENTAL) run .#partition -- $(DISK) $(MNT)
