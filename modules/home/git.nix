@@ -11,11 +11,6 @@ in {
   options.dotfiles.home.dev.git.enable = mkEnableOption "Git and GPG configuration";
 
   config = mkIf cfg.enable {
-    home.packages = with pkgs; [
-      gnupg
-      pinentry-curses
-    ];
-
     programs.gpg = {
       enable = true;
 
@@ -45,7 +40,7 @@ in {
     services.gpg-agent = {
       enable = true;
       enableSshSupport = true;
-      pinentry.package = pkgs.pinentry-curses;
+      pinentry.package = pkgs.pinentry-all;
 
       defaultCacheTtl = 28800;
       maxCacheTtl = 86400;
@@ -102,22 +97,5 @@ in {
         syntax-theme = "base16";
       };
     };
-
-    home.sessionVariables = {
-      SSH_AUTH_SOCK = "\${XDG_RUNTIME_DIR:-/run/user/$(id -u)}/gnupg/S.gpg-agent.ssh";
-      GPG_TTY = "$(tty)";
-    };
-
-    programs.bash.initExtra = mkAfter ''
-      export GPG_TTY="$(tty)"
-      export SSH_AUTH_SOCK="$(${pkgs.gnupg}/bin/gpgconf --list-dirs agent-ssh-socket)"
-      ${pkgs.gnupg}/bin/gpgconf --launch gpg-agent
-    '';
-
-    programs.zsh.initContent = mkAfter ''
-      export GPG_TTY="$(tty)"
-      export SSH_AUTH_SOCK="$(${pkgs.gnupg}/bin/gpgconf --list-dirs agent-ssh-socket)"
-      ${pkgs.gnupg}/bin/gpgconf --launch gpg-agent
-    '';
   };
 }
