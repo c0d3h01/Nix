@@ -5,10 +5,8 @@
   ...
 }: let
   inherit (lib) mkIf;
-
 in {
   config = mkIf hostProfile.isWorkstation {
-
     services.flatpak.enable = true;
     systemd.services.flatpak-repo = {
       wantedBy = ["multi-user.target"];
