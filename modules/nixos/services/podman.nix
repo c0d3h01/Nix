@@ -29,10 +29,10 @@ in {
     };
 
     environment.systemPackages = with pkgs; [
+      podman-desktop
       podman-compose
-      buildah
+      docker-buildx
       skopeo
-      lazydocker
     ];
   };
 }
