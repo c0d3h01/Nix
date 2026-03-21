@@ -34,7 +34,6 @@ in {
     hardware.graphics.enable = lib.mkDefault hostProfile.isWorkstation;
     hardware.zram.enable = lib.mkDefault true;
     hardware.udev.enable = lib.mkDefault true;
-    hardware.filesystem.enable = lib.mkDefault true;
 
     services.podman.enable = lib.mkDefault true;
     services.ollama.enable = lib.mkDefault true;
