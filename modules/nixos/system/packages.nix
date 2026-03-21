@@ -1,24 +1,15 @@
 {
-  config,
   hostProfile,
   pkgs,
   lib,
   ...
 }: let
-  inherit (lib) mkIf mkEnableOption optionals;
+  inherit (lib) mkIf;
   inherit (hostProfile) isWorkstation;
-  cfg = config.dotfiles.nixos.system.packages;
 
-  desktopApps = with pkgs; [
-    vscode-fhs
-    antigravity-fhs
-    postman
-    github-desktop
-  ];
 in {
-  options.dotfiles.nixos.system.packages.enable = mkEnableOption "Default system packages";
-
-  config = mkIf cfg.enable {
-    environment.systemPackages = optionals isWorkstation desktopApps;
-  };
+  environment.systemPackages = mkIf isWorkstation [
+    pkgs.vscode-fhs
+    pkgs.antigravity-fhs
+  ];
 }
