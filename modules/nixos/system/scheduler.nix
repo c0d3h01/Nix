@@ -18,7 +18,7 @@ in {
         enable = isWorkstation;
         scheduler = mkDefault "scx_lavd";
         extraArgs = mkDefault [
-          "--performance"
+          "--autopilot"
         ];
       };
     }
