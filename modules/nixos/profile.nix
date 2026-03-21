@@ -48,7 +48,6 @@ in {
     system.nix-ld.enable = lib.mkDefault true;
     system.oomd.enable = lib.mkDefault true;
     system.openssh.enable = lib.mkDefault true;
-    system.packages.enable = lib.mkDefault hostProfile.isWorkstation;
     system.pam.enable = lib.mkDefault true;
     system.printing.enable = lib.mkDefault false;
     system.scheduler.enable = lib.mkDefault hostProfile.isWorkstation;
