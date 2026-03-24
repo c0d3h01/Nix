@@ -1,24 +1,20 @@
 {
-  config,
   lib,
   pkgs,
   hostProfile,
   ...
 }: let
-  inherit (lib) mkIf mkEnableOption mkDefault;
-  cfg = config.dotfiles.nixos.hardware.graphics;
+  inherit (lib) mkIf mkDefault;
 in {
-  options.dotfiles.nixos.hardware.graphics.enable = mkEnableOption "Graphics support";
-
-  config = mkIf cfg.enable {
+  config = mkIf hostProfile.isWorkstation {
     hardware.graphics = {
       enable = mkDefault true;
-      enable32Bit = mkDefault hostProfile.isWorkstation;
+      enable32Bit = mkDefault true;
 
-      extraPackages = mkIf hostProfile.isWorkstation (with pkgs; [
+      extraPackages = with pkgs; [
         rocmPackages.clr
         rocmPackages.clr.icd
-      ]);
+      ];
     };
 
     services.xserver.videoDrivers = mkDefault ["amdgpu"];

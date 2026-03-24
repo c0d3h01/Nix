@@ -1,7 +1,6 @@
 {
   config,
   lib,
-  pkgs,
   modulesPath,
   ...
 }: {
@@ -59,6 +58,7 @@
     kernelParams = [
       "mitigations=off"
       "quiet"
+      "splash"
     ];
   };
 
