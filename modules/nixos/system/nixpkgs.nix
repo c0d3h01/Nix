@@ -1,8 +1,14 @@
-{
-  nixpkgs.config = {
-    allowUnfree = true;
-    allowBroken = false;
-    allowInsecure = false;
-    allowUnsupportedSystem = false;
+{lib, ...}: let
+  inherit (lib) mkDefault;
+in {
+  nixpkgs = {
+    hostPlatform = lib.mkDefault "x86_64-linux";
+
+    config = {
+      allowUnfree = true;
+      allowBroken = false;
+      allowInsecure = false;
+      allowUnsupportedSystem = false;
+    };
   };
 }
