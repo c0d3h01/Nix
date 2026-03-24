@@ -1,9 +1,12 @@
 {
   # https://www.kernel.org/doc/html/latest/admin-guide/kernel-parameters.html
   boot.kernelParams = [
-    # NixOS produces many wakeups per second, which is bad for battery life.
-    # This kernel parameter disables the timer tick on the last 4 cores
-    "nohz_full=4-7"
+    # disable all mitigations for Spectre, Meltdown, etc.
+    "mitigations=off"
+
+    #
+    "quiet"
+    "splash"
 
     # make stack-based attacks on the kernel harder
     "randomize_kstack_offset=on"
@@ -24,8 +27,9 @@
     # only allow signed modules
     "module.sig_enforce=1"
 
-    # blocks access to all kernel memory, even preventing administrators from being able to inspect and probe the kernel
-    "lockdown=confidentiality"
+    # integrity: protects kernel image + /dev/mem without breaking amdgpu firmware
+    # confidentiality breaks Vega 8 firmware loading path and suspend/resume
+    "lockdown=integrity"
 
     # enable buddy allocator free poisoning
     "page_poison=on"
@@ -33,11 +37,8 @@
     # performance improvement for direct-mapped memory-side-cache utilization, reduces the predictability of page allocations
     "page_alloc.shuffle=1"
 
-    # for debugging kernel-level slab issues
-    "slub_debug=FZP"
-
     # disable sysrq keys. sysrq is seful for debugging, but also insecure
-    "sysrq_always_enabled=0" # 0 | 1 # 0 means disabled
+    "sysrq_always_enabled=0"
 
     # ignore access time (atime) updates on files, except when they coincide with updates to the ctime or mtime
     "rootflags=noatime"
