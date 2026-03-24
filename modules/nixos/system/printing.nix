@@ -1,27 +1,15 @@
-{
-  config,
-  lib,
-  hostProfile,
-  ...
-}: let
-  inherit (lib) mkIf mkEnableOption;
-  cfg = config.dotfiles.nixos.system.printing;
-in {
-  options.dotfiles.nixos.system.printing.enable = mkEnableOption "CUPS printing and Avahi";
+{hostProfile, ...}: {
+  services = {
+    printing = {
+      enable = hostProfile.isWorkstation;
+      openFirewall = hostProfile.isWorkstation;
+    };
 
-  config = mkIf cfg.enable {
-    services = mkIf hostProfile.isWorkstation {
-      printing = {
-        enable = true;
-        openFirewall = true;
-      };
-
-      avahi = {
-        enable = true;
-        nssmdns4 = true;
-        nssmdns6 = true;
-        openFirewall = true;
-      };
+    avahi = {
+      enable = hostProfile.isWorkstation;
+      nssmdns4 = true;
+      nssmdns6 = true;
+      openFirewall = hostProfile.isWorkstation;
     };
   };
 }

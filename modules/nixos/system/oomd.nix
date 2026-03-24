@@ -1,25 +1,30 @@
-{
-  config,
-  lib,
-  ...
-}: let
-  inherit (lib) mkIf mkEnableOption mkDefault;
-  cfg = config.dotfiles.nixos.system.oomd;
+{lib, ...}: let
+  inherit (lib) mkDefault;
 in {
-  options.dotfiles.nixos.system.oomd.enable = mkEnableOption "systemd-oomd out-of-memory daemon";
-
-  config = mkIf cfg.enable {
-    systemd.oomd = {
-      enable = mkDefault true;
+  systemd = {
+    # Systemd OOMd
+    oomd = {
+      enable = true;
       enableRootSlice = true;
       enableUserSlices = true;
       enableSystemSlice = true;
+      settings.OOM.DefaultMemoryPressureDurationSec = "20s";
     };
 
-    systemd.services.nix-daemon.serviceConfig = {
-      OOMPolicy = "continue";
-      ManagedOOMMemoryPressure = "kill";
-      ManagedOOMMemoryPressureLimit = "80%";
+    services.nix-daemon.serviceConfig.OOMScoreAdjust = mkDefault 350;
+
+    tmpfiles.settings."10-oomd-root".w = {
+      # Enables storing of the kernel log (including stack trace) into pstore upon a panic or crash.
+      "/sys/module/kernel/parameters/crash_kexec_post_notifiers" = {
+        age = "-";
+        argument = "Y";
+      };
+
+      # Enables storing of the kernel log upon a normal shutdown (shutdown, reboot, halt).
+      "/sys/module/printk/parameters/always_kmsg_dump" = {
+        age = "-";
+        argument = "N";
+      };
     };
   };
 }

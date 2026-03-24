@@ -4,25 +4,20 @@
     ./audio.nix
     ./bpftune.nix
     ./diff.nix
-    ./firewalld.nix
     ./flatpak.nix
     ./fonts.nix
     ./gnome.nix
-    ./gnupg.nix
-    ./networkManager.nix
+    ./irqbalance.nix
     ./nix-ld.nix
     ./nix.nix
     ./nixpkgs.nix
     ./oomd.nix
-    ./openssh.nix
     ./packages.nix
-    ./pam.nix
     ./plasma.nix
     ./printing.nix
     ./scheduler.nix
     ./secrets.nix
     ./user.nix
-    ./wait-online.nix
     ./xfce.nix
     ./xserver.nix
   ];

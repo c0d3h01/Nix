@@ -2,17 +2,11 @@
   pkgs,
   lib,
   config,
-  hostProfile,
   ...
-}: let
-  inherit (lib) mkIf mkEnableOption mkDefault optionals;
-  cfg = config.dotfiles.nixos.system.nix-ld;
-in {
-  options.dotfiles.nixos.system.nix-ld.enable = mkEnableOption "nix-ld for running unpatched binaries";
-
-  config = mkIf cfg.enable {
-    programs.nix-ld.enable = mkDefault true;
-    programs.nix-ld.libraries = with pkgs;
+}: {
+  programs.nix-ld = {
+    enable = true;
+    libraries = with pkgs;
       [
         acl
         attr
@@ -36,7 +30,7 @@ in {
         zlib
         zstd
       ]
-      ++ optionals config.hardware.graphics.enable [
+      ++ lib.optionals config.hardware.graphics.enable [
         pipewire
         cups
         libxkbcommon

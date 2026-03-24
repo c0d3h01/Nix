@@ -1,8 +1,6 @@
 {
-  lib,
   pkgs,
   hostConfig,
-  hostProfile,
   ...
 }: {
   networking.hostName = hostConfig.hostname;
