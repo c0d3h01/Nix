@@ -11,7 +11,6 @@ in {
   environment.systemPackages = mkIf isWorkstation [
     pkgs.vscode-fhs
     pkgs.antigravity-fhs
-    pkgs.ytmdesktop
     pkgs.google-chrome
   ];
 }
