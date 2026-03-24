@@ -1,13 +1,12 @@
 {
   imports = [
     ./acpi.nix
-    ./base.nix
+    ./amd.nix
     ./filesystem.nix
-    ./graphics.nix
+    ./hardware.nix
+    ./power.nix
     ./touchpad.nix
-    ./tuned.nix
     ./udev.nix
-    ./upower.nix
     ./yubikey.nix
     ./zram.nix
   ];
