@@ -4,7 +4,7 @@
 
   networking.wireless = {
     # wpa_supplicant
-    userControlled.enable = true;
+    userControlled = true;
     allowAuxiliaryImperativeNetworks = true;
     extraConfig = ''
       update_config=1
