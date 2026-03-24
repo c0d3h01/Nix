@@ -12,10 +12,13 @@ in {
     pkgs.btrfs-progs
   ];
 
-  services.fstrim.enable = mkDefault true;
+  services.fstrim = {
+    enable = mkDefault true;
+    interval = "weekly";
+  };
 
   services.btrfs.autoScrub = mkIf isBtrfs {
-    enable = true;
+    enable = mkDefault true;
     interval = "monthly";
     fileSystems = ["/"];
   };
