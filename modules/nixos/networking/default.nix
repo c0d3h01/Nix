@@ -1,5 +1,6 @@
 {
   imports = [
+    ./dhcp.nix
     ./firewalld.nix
     ./gnupg.nix
     ./manager.nix
