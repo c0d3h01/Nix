@@ -15,10 +15,7 @@ in {
     ports = [22];
 
     # Tell SSH to look in the sops-decrypted location for user keys
-    settings.AuthorizedKeysFile = [
-      "%h/.ssh/authorized_keys"
-      "/run/secrets-for-users/%N/${userName}"
-    ];
+    settings.AuthorizedKeysFile = "%h/.ssh/authorized_keys /run/secrets-for-users/%N/${userName}";
 
     # Host Keys: Ed25519, RSA
     hostKeys = [
