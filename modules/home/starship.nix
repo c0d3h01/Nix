@@ -1,120 +1,109 @@
 {
-  config,
-  lib,
-  ...
-}: let
-  inherit (lib) mkIf mkEnableOption;
-  cfg = config.dotfiles.home.shell.starship;
-in {
-  options.dotfiles.home.shell.starship.enable = mkEnableOption "Starship prompt";
+  programs.starship = {
+    enable = true;
+    enableZshIntegration = true;
+    enableBashIntegration = true;
 
-  config = mkIf cfg.enable {
-    programs.starship = {
-      enable = true;
-      enableZshIntegration = true;
-      enableBashIntegration = true;
+    settings = {
+      format = ''
+        $directory$git_branch$git_status$git_state$cmd_duration
+        $character
+      '';
 
-      settings = {
-        format = ''
-          $directory$git_branch$git_status$git_state$cmd_duration
-          $character
-        '';
+      right_format = "$nix_shell$python$nodejs$rust$golang$java$c";
+      add_newline = true;
 
-        right_format = "$nix_shell$python$nodejs$rust$golang$java$c";
-        add_newline = true;
-
-        character = {
-          success_symbol = "[❯](purple)";
-          error_symbol = "[❯](red)";
-          vimcmd_symbol = "[❮](green)";
-        };
-
-        directory = {
-          style = "blue";
-          truncation_length = 4;
-          truncate_to_repo = true;
-          truncation_symbol = "…/";
-        };
-
-        git_branch = {
-          format = "[$symbol$branch]($style) ";
-          symbol = "";
-          style = "242";
-        };
-
-        git_status = {
-          format = "[$all_status$ahead_behind]($style) ";
-          style = "cyan";
-          conflicted = "=";
-          ahead = "⇡";
-          behind = "⇣";
-          diverged = "⇕";
-          untracked = "?";
-          stashed = "≡";
-          modified = "!";
-          staged = "+";
-          renamed = "»";
-          deleted = "✘";
-        };
-
-        git_state = {
-          format = "[$state( $progress_current/$progress_total)]($style) ";
-          style = "yellow";
-        };
-
-        cmd_duration = {
-          format = "[$duration]($style) ";
-          style = "yellow";
-          min_time = 2000;
-        };
-
-        nix_shell = {
-          format = "[$symbol$state( \\($name\\))]($style) ";
-          symbol = " ";
-          style = "bold blue";
-        };
-
-        python = {
-          format = "[$symbol$version]($style) ";
-          symbol = " ";
-          style = "yellow";
-        };
-
-        nodejs = {
-          format = "[$symbol$version]($style) ";
-          symbol = " ";
-          style = "green";
-        };
-
-        rust = {
-          format = "[$symbol$version]($style) ";
-          symbol = " ";
-          style = "red";
-        };
-
-        golang = {
-          format = "[$symbol$version]($style) ";
-          symbol = " ";
-          style = "cyan";
-        };
-
-        java = {
-          format = "[$symbol$version]($style) ";
-          symbol = " ";
-          style = "red";
-        };
-
-        c = {
-          format = "[$symbol$version]($style) ";
-          symbol = " ";
-          style = "149";
-        };
-
-        package.disabled = true;
-        aws.disabled = true;
-        gcloud.disabled = true;
-        azure.disabled = true;
+      character = {
+        success_symbol = "[❯](purple)";
+        error_symbol = "[❯](red)";
+        vimcmd_symbol = "[❮](green)";
       };
+
+      directory = {
+        style = "blue";
+        truncation_length = 4;
+        truncate_to_repo = true;
+        truncation_symbol = "…/";
+      };
+
+      git_branch = {
+        format = "[$symbol$branch]($style) ";
+        symbol = "";
+        style = "242";
+      };
+
+      git_status = {
+        format = "[$all_status$ahead_behind]($style) ";
+        style = "cyan";
+        conflicted = "=";
+        ahead = "⇡";
+        behind = "⇣";
+        diverged = "⇕";
+        untracked = "?";
+        stashed = "≡";
+        modified = "!";
+        staged = "+";
+        renamed = "»";
+        deleted = "✘";
+      };
+
+      git_state = {
+        format = "[$state( $progress_current/$progress_total)]($style) ";
+        style = "yellow";
+      };
+
+      cmd_duration = {
+        format = "[$duration]($style) ";
+        style = "yellow";
+        min_time = 2000;
+      };
+
+      nix_shell = {
+        format = "[$symbol$state( \\($name\\))]($style) ";
+        symbol = " ";
+        style = "bold blue";
+      };
+
+      python = {
+        format = "[$symbol$version]($style) ";
+        symbol = " ";
+        style = "yellow";
+      };
+
+      nodejs = {
+        format = "[$symbol$version]($style) ";
+        symbol = " ";
+        style = "green";
+      };
+
+      rust = {
+        format = "[$symbol$version]($style) ";
+        symbol = " ";
+        style = "red";
+      };
+
+      golang = {
+        format = "[$symbol$version]($style) ";
+        symbol = " ";
+        style = "cyan";
+      };
+
+      java = {
+        format = "[$symbol$version]($style) ";
+        symbol = " ";
+        style = "red";
+      };
+
+      c = {
+        format = "[$symbol$version]($style) ";
+        symbol = " ";
+        style = "149";
+      };
+
+      package.disabled = true;
+      aws.disabled = true;
+      gcloud.disabled = true;
+      azure.disabled = true;
     };
   };
 }

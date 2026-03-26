@@ -13,11 +13,13 @@
     ./gh.nix
     ./ghostty.nix
     ./git.nix
+    ./gtk.nix
     ./home.nix
+    ./htop.nix
     ./kitty.nix
     ./lazygit.nix
     ./lsd.nix
-    ./nixgl.nix
+    ./nix-your-shell.nix
     ./nixvim.nix
     ./ripgrep.nix
     ./secrets.nix

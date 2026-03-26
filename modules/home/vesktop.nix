@@ -1,49 +1,38 @@
 {
-  config,
-  lib,
-  ...
-}: let
-  inherit (lib) mkIf mkEnableOption;
-  cfg = config.dotfiles.home.features.vesktop;
-in {
-  options.dotfiles.home.features.vesktop.enable = mkEnableOption "Vesktop Discord client";
+  programs.vesktop = {
+    enable = false;
 
-  config = mkIf cfg.enable {
-    programs.vesktop = {
-      enable = true;
+    settings = {
+      appBadge = false;
+      arRPC = true;
+      checkUpdates = false;
+      customTitleBar = false;
+      disableMinSize = true;
+      minimizeToTray = false;
+      tray = false;
+      staticTitle = true;
+      discordBranch = "stable";
 
-      settings = {
-        appBadge = false;
-        arRPC = true;
-        checkUpdates = false;
-        customTitleBar = false;
-        disableMinSize = true;
-        minimizeToTray = false;
-        tray = false;
-        staticTitle = true;
-        discordBranch = "stable";
+      hardwareAcceleration = true;
+      openLinksWithElectron = false;
 
-        hardwareAcceleration = true;
-        openLinksWithElectron = false;
+      splashTheming = false;
+      splashAnimationDuration = 500;
 
-        splashTheming = false;
-        splashAnimationDuration = 500;
+      saveWindowState = true;
+      disableAudioControl = false;
+    };
 
-        saveWindowState = true;
-        disableAudioControl = false;
-      };
-
-      vencord.settings = {
-        autoUpdate = false;
-        autoUpdateNotification = false;
-        useQuickCss = true;
-        enableReactDevtools = false;
-        frameless = false;
-        transparent = true;
-        winCtrlQ = false;
-        disableMinSize = true;
-        winNativeTitleBar = false;
-      };
+    vencord.settings = {
+      autoUpdate = false;
+      autoUpdateNotification = false;
+      useQuickCss = true;
+      enableReactDevtools = false;
+      frameless = false;
+      transparent = true;
+      winCtrlQ = false;
+      disableMinSize = true;
+      winNativeTitleBar = false;
     };
   };
 }

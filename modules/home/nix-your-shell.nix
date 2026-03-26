@@ -1,7 +1,6 @@
 {
-  programs.zoxide = {
+  programs.nix-your-shell = {
     enable = true;
     enableZshIntegration = true;
-    enableBashIntegration = true;
   };
 }

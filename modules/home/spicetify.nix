@@ -6,16 +6,13 @@
   hostConfig,
   ...
 }: let
-  inherit (lib) mkIf mkEnableOption;
-  cfg = config.dotfiles.home.features.spicetify;
+  inherit (lib) mkIf;
 in {
-  options.dotfiles.home.features.spicetify.enable = mkEnableOption "Spicetify";
-
   imports = [
     inputs.spicetify.homeManagerModules.default
   ];
 
-  config.programs.spicetify = mkIf ((hostConfig.workstation or false) && cfg.enable) (
+  config.programs.spicetify = mkIf (hostConfig.workstation or false) (
     let
       spicePkgs = inputs.spicetify.legacyPackages.${pkgs.stdenv.hostPlatform.system};
     in {
