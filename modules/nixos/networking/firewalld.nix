@@ -1,4 +1,4 @@
-{ pkgs, ... }: {
+{pkgs, ...}: {
   # Use nftables as the backend for better performance and lower overhead
   networking.nftables.enable = true;
 
@@ -16,10 +16,10 @@
     # Ports: Only essential services.
     # Note: When using firewalld, prefer adding ports via `services.firewalld` zones
     allowedTCPPorts = [
-      22    # SSH
-      80    # HTTP
-      443   # HTTPS
-      8080  # Dev servers
+      22 # SSH
+      80 # HTTP
+      443 # HTTPS
+      8080 # Dev servers
       59010 # Custom/App specific
       59011 # Custom/App specific
     ];
