@@ -4,7 +4,7 @@
 
     initContent = ''
       export NIXPKGS_ALLOW_UNFREE=1
-      
+
       ifsource() { [ -f "$1" ] && source "$1"; }
 
       ifsource "${pkgs.zsh-autosuggestions}/share/zsh-autosuggestions/zsh-autosuggestions.zsh"
