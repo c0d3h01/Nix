@@ -1,61 +1,40 @@
-{lib, ...}: {
+_: let
+  rootDev = "/dev/disk/by-label/nixos-root";
+  btrfsOpts = [
+    "noatime"
+    "compress=zstd:1"
+    "ssd"
+    "space_cache=v2"
+    "discard=async"
+  ];
+in {
   fileSystems = {
     "/" = {
-      device = "/dev/disk/by-label/nixos-root";
+      device = rootDev;
       fsType = "btrfs";
-      options = [
-        "subvol=/@"
-        "noatime"
-        "compress=zstd:1"
-        "ssd"
-      ];
+      options = ["subvol=/@"] ++ btrfsOpts;
     };
-
     "/home" = {
-      device = "/dev/disk/by-label/nixos-root";
+      device = rootDev;
       fsType = "btrfs";
-      options = [
-        "subvol=/@home"
-        "noatime"
-        "compress=zstd:1"
-        "ssd"
-      ];
+      options = ["subvol=/@home"] ++ btrfsOpts;
     };
-
     "/nix" = {
-      device = "/dev/disk/by-label/nixos-root";
+      device = rootDev;
       fsType = "btrfs";
-      options = [
-        "subvol=/@nix"
-        "noatime"
-        "compress=zstd:1"
-        "ssd"
-      ];
+      options = ["subvol=/@nix"] ++ btrfsOpts;
     };
-
     "/var/tmp" = {
-      device = "/dev/disk/by-label/nixos-root";
+      device = rootDev;
       fsType = "btrfs";
-      options = [
-        "subvol=/@tmp"
-        "noatime"
-        "compress=zstd:1"
-        "ssd"
-      ];
+      options = ["subvol=/@tmp"] ++ btrfsOpts;
     };
-
     "/var/log" = {
-      device = "/dev/disk/by-label/nixos-root";
+      device = rootDev;
       fsType = "btrfs";
       neededForBoot = true;
-      options = [
-        "subvol=/@log"
-        "noatime"
-        "compress=zstd:1"
-        "ssd"
-      ];
+      options = ["subvol=/@log"] ++ btrfsOpts;
     };
-
     "/boot" = {
       device = "/dev/disk/by-label/NIXBOOT";
       fsType = "vfat";
