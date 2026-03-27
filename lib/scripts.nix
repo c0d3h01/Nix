@@ -12,19 +12,18 @@ in
         curl -L https://nixos.org/nix/install | sh -s -- --daemon
       '';
     };
-
   }
   // lib.optionalAttrs isLinux {
     partition = writeShellApplication {
       name = "partition";
       runtimeInputs = with pkgs; [
-        util-linux   # wipefs, blkid, mkswap, swapon, findmnt
-        dosfstools   # mkfs.fat
-        btrfs-progs  # mkfs.btrfs, btrfs
-        e2fsprogs    # mkfs.ext4, chattr
-        gptfdisk     # sgdisk, partprobe
-        coreutils    # truncate, fallocate, chmod, etc.
-        zfs          # zpool, zfs, zgenhostid
+        util-linux # wipefs, blkid, mkswap, swapon, findmnt
+        dosfstools # mkfs.fat
+        btrfs-progs # mkfs.btrfs, btrfs
+        e2fsprogs # mkfs.ext4, chattr
+        gptfdisk # sgdisk, partprobe
+        coreutils # truncate, fallocate, chmod, etc.
+        zfs # zpool, zfs, zgenhostid
       ];
       text = ''
         DISK="''${1:-}"
@@ -315,5 +314,4 @@ in
         nixos-enter --root "$MNT"
       '';
     };
-
   }
