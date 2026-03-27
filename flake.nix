@@ -2,7 +2,7 @@
   description = "NixOS Dotfiles";
 
   inputs = {
-    nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable-small";
+    nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
 
     # Just for pinning
     systems.url = "github:nix-systems/default";
