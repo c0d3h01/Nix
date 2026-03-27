@@ -3,6 +3,8 @@ DISK ?= /dev/nvme0n1
 MNT  ?= /mnt
 USER ?= $(shell whoami)
 
+MAKEFLAGS += --no-print-directory
+
 NIX_FLAGS := --extra-experimental-features "nix-command flakes"
 
 .PHONY: help rebuild home partition install-nix install-nixos mount-rescue troubleshoot check fmt clean
