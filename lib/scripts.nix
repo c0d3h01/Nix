@@ -164,7 +164,8 @@ in
           # produces a different hash than Nix, breaking ZFS import at boot.
           HOST_ID="$(echo -n "$(hostname)" | md5sum | cut -c1-8)"
 
-          echo "Creating ZFS pool '''${POOL_NAME}'..."
+          echo "Creating ZFS pool ''${POOL_NAME}..."
+
           zpool create \
             -o ashift=12 \
             -o autotrim=on \
