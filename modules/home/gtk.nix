@@ -39,9 +39,12 @@ in {
           gtk-decoration-layout = "icon:minimize,maximize,close";
         };
 
-        gtk4.extraConfig = {
-          gtk-application-prefer-dark-theme = true;
-          gtk-decoration-layout = "icon:minimize,maximize,close";
+        gtk4 = {
+          inherit (config.gtk) theme;
+          extraConfig = {
+            gtk-application-prefer-dark-theme = true;
+            gtk-decoration-layout = "icon:minimize,maximize,close";
+          };
         };
       })
 
@@ -68,8 +71,11 @@ in {
           gtk-application-prefer-dark-theme = true;
         };
 
-        gtk4.extraConfig = {
-          gtk-application-prefer-dark-theme = true;
+        gtk4 = {
+          inherit (config.gtk) theme;
+          extraConfig = {
+            gtk-application-prefer-dark-theme = true;
+          };
         };
       })
     ];
