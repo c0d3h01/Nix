@@ -7,7 +7,6 @@
 in {
   boot.loader.grub = lib.mkIf (selected == "grub") {
     enable = true;
-
     efiSupport = true;
     device = "nodev";
     configurationLimit = 15;

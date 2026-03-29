@@ -1,4 +1,12 @@
 {
+  lib,
+  hardwareProfile,
+  ...
+}: let
+  inherit (lib) mkIf;
+in {
+  # systemd-oomd Configuration - Out-of-memory daemon for proactive memory management
+  # Prevents system freezes by killing memory-hungry processes before complete exhaustion
   systemd = {
     oomd = {
       enable = true;
@@ -6,26 +14,35 @@
       enableUserSlices = true;
       enableSystemSlice = true;
 
-      # Hardcoded for 6GB RAM: React faster (3s) at lower pressure (60%)
+      # Tuned for low-RAM systems (6GB): React faster at lower pressure threshold
       settings.OOM = {
-        DefaultMemoryPressureLimit = "60%";
-        DefaultMemoryPressureDurationSec = "3s";
-        # Since we have ample ZRAM, we can be less aggressive on swap limit
+        # Kill processes when memory pressure exceeds this threshold
+        DefaultMemoryPressureLimit = hardwareProfile.oomdPressure;
+        # Time window to measure pressure (shorter = more responsive)
+        DefaultMemoryPressureDurationSec = hardwareProfile.oomdDuration;
+        # Swap usage limit before triggering OOM
         DefaultSwapUsedLimit = "90%";
+        # Preferred pressure limit for user slices
         PreferredMemoryPressureLimit = "95%";
       };
     };
 
+    # OOM Score adjustments to protect critical services
     services = {
-      # Protect the kernel and init system
+      # Protect the kernel and init system from being killed
       systemd-journald.serviceConfig.OOMScoreAdjust = -1000;
       systemd-udevd.serviceConfig.OOMScoreAdjust = -1000;
+      systemd-logind.serviceConfig.OOMScoreAdjust = -900;
 
-      # Make GNOME shell harder to kill than apps, but easier than kernel
-      "gdm.service".serviceConfig.OOMScoreAdjust = -500;
+      # Make display manager harder to kill than apps but easier than kernel
+      "gdm.service".serviceConfig.OOMScoreAdjust = mkIf (hardwareProfile.gpuType != null) (-500);
+      "sddm.service".serviceConfig.OOMScoreAdjust = mkIf (hardwareProfile.gpuType != null) (-500);
 
-      # Nix builds are memory hungry; kill them first if needed
+      # Nix builds are memory-intensive; allow them to be killed first
       nix-daemon.serviceConfig.OOMScoreAdjust = 500;
+
+      # Database services should be protected
+      postgresql.serviceConfig.OOMScoreAdjust = -300;
     };
   };
 }

@@ -1,35 +1,55 @@
 {
   imports = [
+    # Shell and terminal
     ./alacritty.nix
     ./bash.nix
+    ./zsh.nix
+    ./starship.nix
+    ./tmux.nix
+
+    # CLI tools
     ./bat.nix
     ./delta.nix
     ./dircolors.nix
     ./direnv.nix
     ./eza.nix
     ./fd.nix
-    ./fonts.nix
     ./fzf.nix
-    ./gh.nix
-    ./ghostty.nix
-    ./git.nix
-    ./gtk.nix
-    ./home.nix
     ./htop.nix
-    ./kitty.nix
     ./lazygit.nix
     ./lsd.nix
-    ./nix-your-shell.nix
-    ./nixvim.nix
     ./ripgrep.nix
-    ./secrets.nix
-    ./spicetify.nix
-    ./starship.nix
-    ./tmux.nix
-    ./vesktop.nix
-    ./wezterm.nix
-    ./yt-dlp.nix
     ./zoxide.nix
-    ./zsh.nix
+    ./yt-dlp.nix
+
+    # Development tools
+    ./development
+
+    # Git and GitHub
+    ./git.nix
+    ./gh.nix
+
+    # Editors and terminals
+    ./ghostty.nix
+    ./kitty.nix
+    ./wezterm.nix
+    ./nixvim.nix
+
+    # GUI and desktop
+    ./gtk.nix
+    ./fonts.nix
+
+    # Applications
+    ./vesktop.nix
+    ./spicetify.nix
+
+    # Core home configuration
+    ./home.nix
+
+    # Secrets (optional, requires sops-nix)
+    ./secrets.nix
+
+    # Shell enhancements
+    ./nix-your-shell.nix
   ];
 }

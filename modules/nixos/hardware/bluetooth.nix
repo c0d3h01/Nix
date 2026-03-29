@@ -1,35 +1,28 @@
 {
-  config,
   lib,
   hostProfile,
   ...
-}: {
-  hardware.bluetooth = {
-    enable = true;
-    # Power on Bluetooth adapter at boot
-    powerOnBoot = true;
+}: let
+  inherit (lib) mkIf;
+in {
+  config = mkIf hostProfile.isWorkstation {
+    hardware.bluetooth = {
+      enable = true;
+      powerOnBoot = true;
 
-    settings = {
-      General = {
-        # Enable experimental features (LE Audio, etc.)
-        Experimental = true;
-        # Make device discoverable faster
-        FastConnectable = true;
-        # Improve compatibility with various devices
-        KernelExperimental = "true";
-      };
-      Policy = {
-        # Auto-enable services for connected devices
-        AutoEnable = true;
-      };
-      # Low-latency tweaks for audio/mouse
-      General = {
-        # Reduce latency for HID devices
-        FastIdleTimeout = "1";
+      settings = {
+        General = {
+          Experimental = true;
+          FastConnectable = true;
+          KernelExperimental = "true";
+          FastIdleTimeout = "1";
+        };
+        Policy = {
+          AutoEnable = true;
+        };
       };
     };
-  };
 
-  # Enable bluetooth service restart on failure
-  systemd.services.bluetooth.serviceConfig.Restart = "on-failure";
+    systemd.services.bluetooth.serviceConfig.Restart = "on-failure";
+  };
 }

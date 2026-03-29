@@ -1,39 +1,47 @@
 {
   lib,
   pkgs,
+  hostProfile,
+  hardwareProfile,
   ...
-}: {
+}: let
+  inherit (lib) mkIf;
+in {
+  # Nix Configuration - Optimized for low-RAM systems with automatic GC
   nix = {
     package = pkgs.lix;
 
-    # Prioritize UI responsiveness during builds
+    # Prioritize UI responsiveness during builds by deprioritizing build processes
     daemonCPUSchedPolicy = "batch";
     daemonIOSchedClass = "idle";
 
+    # Automatic garbage collection to free disk space
     gc = {
       automatic = true;
       dates = "daily";
       options = "--delete-older-than 7d";
     };
 
+    # Store optimization to save disk space
     optimise = {
       automatic = true;
       dates = "Sun 04:00";
     };
 
     settings = {
-      # Prevent disk full errors on small NVMe
-      min-free = 1024 * 1024 * 1024;
-      max-free = 5 * 1024 * 1024 * 1024;
+      # Prevent disk full errors on small NVMe/SSD
+      min-free = 1024 * 1024 * 1024; # 1GB minimum free
+      max-free = 5 * 1024 * 1024 * 1024; # 5GB target free
 
-      # Critical for 6GB RAM: Limit parallel builds to prevent OOM
-      max-jobs = 2;
-      cores = 2;
+      # CRITICAL for 6GB RAM: Limit parallel builds to prevent OOM kills
+      max-jobs = hardwareProfile.maxBuildJobs;
+      cores = hardwareProfile.buildCores;
       auto-allocate-uids = true;
 
+      # Enable modern Nix features
       experimental-features = ["nix-command" "flakes" "auto-allocate-uids"];
 
-      # Network & Caches
+      # Network & Binary Caches
       http-connections = 25;
       builders-use-substitutes = true;
 
@@ -49,5 +57,13 @@
 
       trusted-users = ["root" "@wheel"];
     };
+  };
+
+  # Additional Nix-related optimizations
+  nixpkgs.config = {
+    allowUnfree = true;
+    allowBroken = false;
+    allowInsecure = false;
+    allowUnsupportedSystem = false;
   };
 }
