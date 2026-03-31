@@ -1,244 +1,140 @@
 {pkgs}: let
   inherit (pkgs) writeShellApplication;
-  inherit (pkgs) lib;
+  inherit (pkgs.lib) optionalAttrs mkIf;
   inherit (pkgs.stdenv.hostPlatform) isLinux;
+
+  # Shared partition mounting logic for rescue/troubleshoot
+  mountRootScript = fsType: ''
+    MNT="''${1:-/mnt}"
+    PART_ROOT="/dev/disk/by-label/nixos-root"
+    PART_BOOT="/dev/disk/by-label/nixos-boot"
+
+    if [[ $fsType == "btrfs" ]]; then
+      mount -t btrfs -o subvol=/@,noatime,compress=zstd:3 "$PART_ROOT" "$MNT"
+      mkdir -p "$MNT"/{home,nix,var/tmp,var/log,boot}
+      mount -t btrfs -o subvol=/@home,noatime,compress=zstd:3 "$PART_ROOT" "$MNT/home"
+      mount -t btrfs -o subvol=/@nix,noatime,compress=zstd:3  "$PART_ROOT" "$MNT/nix"
+      mount -t btrfs -o subvol=/@tmp,noatime,compress=zstd:3  "$PART_ROOT" "$MNT/var/tmp"
+      mount -t btrfs -o subvol=/@log,noatime,compress=zstd:3  "$PART_ROOT" "$MNT/var/log"
+    else
+      mount -t ext4 -o noatime,errors=remount-ro "$PART_ROOT" "$MNT"
+      mkdir -p "$MNT/boot"
+    fi
+    mount -o umask=0077 "$PART_BOOT" "$MNT/boot"
+  '';
+
+  mkLinuxApp = name: {
+    runtimeInputs ? [],
+    text,
+  }:
+    writeShellApplication {
+      inherit name;
+      runtimeInputs = with pkgs; [coreutils] ++ runtimeInputs;
+      text = "set -euo pipefail\n" + text;
+    };
 in
   {
     install-nix = writeShellApplication {
       name = "install-nix";
-      runtimeInputs = with pkgs; [curl];
+      runtimeInputs = [pkgs.curl];
       text = ''
-        echo "Installing Nix package manager (multi-user)..."
-        curl -L https://nixos.org/nix/install | sh -s -- --daemon
+        echo "Installing Nix (multi-user)..."
+        exec curl -L https://nixos.org/nix/install | sh -s -- --daemon
       '';
     };
   }
-  // lib.optionalAttrs isLinux {
-    partition = writeShellApplication {
-      name = "partition";
+  // optionalAttrs isLinux {
+    partition = mkLinuxApp "partition" {
       runtimeInputs = with pkgs; [
-        util-linux # wipefs, blkid, mkswap, swapon, findmnt
-        dosfstools # mkfs.fat
-        btrfs-progs # mkfs.btrfs, btrfs
-        e2fsprogs # mkfs.ext4, chattr
-        gptfdisk # sgdisk, partprobe
-        coreutils # truncate, fallocate, chmod, etc.
+        util-linux
+        dosfstools
+        btrfs-progs
+        e2fsprogs
+        gptfdisk
       ];
       text = ''
         DISK="''${1:-}"
         MNT="''${2:-/mnt}"
         BOOT_SIZE="''${BOOT_SIZE:-1G}"
 
-        if [[ -z $DISK ]]; then
-          echo "Usage: partition <disk> [mountpoint]"
-          echo "  e.g. partition /dev/nvme0n1"
-          echo ""
-          echo "Environment variables:"
-          echo "  BOOT_SIZE  EFI partition size (default: 1G)"
-          exit 1
-        fi
+        [[ -n $DISK ]] || { echo "Usage: partition <disk> [mountpoint]"; exit 1; }
+        [[ $EUID -eq 0 ]] || { echo "Error: run as root"; exit 1; }
+        [[ -b $DISK ]] || { echo "Error: $DISK is not a block device"; exit 1; }
 
-        if [[ $EUID -ne 0 ]]; then
-          echo "Error: must run as root"
-          exit 1
-        fi
+        echo "Root filesystem: [1] btrfs (default)  [2] ext4"
+        read -rp "Choice: " c; [[ "''${c:-1}" == "2" ]] && FS="ext4" || FS="btrfs"
 
-        if [[ ! -b $DISK ]]; then
-          echo "Error: $DISK is not a block device"
-          exit 1
-        fi
+        echo "WARNING: This DESTROYS all data on $DISK"
+        echo "Layout: EFI ''${BOOT_SIZE} + root (remaining), zram for swap"
+        read -rp "Type 'yes' to confirm: " ok; [[ $ok == "yes" ]] || exit 1
 
-        echo "Choose filesystem for root partition:"
-        echo "  [1] btrfs (default) — recommended, best feature set"
-        echo "  [2] ext4            — simple, stable fallback"
-        read -rp "Enter choice [1/2]: " fs_choice
-        case "''${fs_choice:-1}" in
-          2) FS_TYPE="ext4" ;;
-          *) FS_TYPE="btrfs" ;;
-        esac
-        echo "-> Using: ''${FS_TYPE}"
-        echo ""
-
-        echo "WARNING: This will DESTROY all data on ''${DISK}"
-        echo ""
-        echo "  Partition layout:"
-        echo "    1  nixos-boot  ''${BOOT_SIZE}   FAT32 (EFI)"
-        echo "    2  nixos-root  remaining  ''${FS_TYPE}"
-        echo "  (no swap partition — zram-generator handles swap at runtime)"
-        echo ""
-        read -rp "Type 'yes' to continue: " confirm
-        if [[ $confirm != "yes" ]]; then
-          echo "Aborted."
-          exit 1
-        fi
-
-        # Unmount anything currently mounted under the target mountpoint.
-        echo "Unmounting ''${MNT}..."
         umount -R "$MNT" 2>/dev/null || true
+        sgdisk --zap-all "$DISK" && wipefs -a "$DISK"
 
-        echo "Wiping partition table and filesystem signatures on ''${DISK}..."
-        sgdisk --zap-all "$DISK"
-        # sgdisk destroys the partition table but leaves filesystem superblocks
-        # (btrfs, ext4) at their on-disk offsets. Wipe them explicitly so
-        # no tool can misdetect old data on the raw device.
-        wipefs -a "$DISK"
-
-        echo "Creating new GPT partition table..."
         sgdisk \
           --new=1:0:"+''${BOOT_SIZE}" --typecode=1:EF00 --change-name=1:nixos-boot \
           --new=2:0:0               --typecode=2:8300 --change-name=2:nixos-root \
           "$DISK"
+        partprobe "$DISK" && sleep 1
 
-        sleep 1
-        partprobe "$DISK"
-        sleep 1
-
-        # Wait for udev to expose partition symlinks before we use them.
-        wait_for_label() {
-          local label="$1" attempts=0
-          while [[ ! -e "/dev/disk/by-partlabel/''${label}" ]] && ((attempts < 20)); do
+        for label in nixos-boot nixos-root; do
+          for i in {1..20}; do
+            [[ -e "/dev/disk/by-partlabel/$label" ]] && break
             sleep 0.5
-            ((attempts++))
           done
-          if [[ ! -e "/dev/disk/by-partlabel/''${label}" ]]; then
-            echo "Error: partition label ''${label} not found after 10s"
-            exit 1
-          fi
-        }
+          [[ -e "/dev/disk/by-partlabel/$label" ]] || { echo "Missing: $label"; exit 1; }
+        done
 
-        wait_for_label "nixos-boot"
-        wait_for_label "nixos-root"
+        BOOT="/dev/disk/by-partlabel/nixos-boot"
+        ROOT="/dev/disk/by-partlabel/nixos-root"
+        wipefs -a "$BOOT" "$ROOT"
 
-        PART_BOOT="/dev/disk/by-partlabel/nixos-boot"
-        PART_ROOT="/dev/disk/by-partlabel/nixos-root"
+        mkfs.fat -F32 -n nixos-boot "$BOOT"
 
-        # Wipe partition-level superblocks too. btrfs writes a backup superblock
-        # near the end of the partition; when the partition boundary aligns with
-        # the old one, it survives the whole-disk wipe above and could cause
-        # misdetection of old data on the raw device.
-        echo "Wiping filesystem signatures on partitions..."
-        wipefs -a "$PART_BOOT"
-        wipefs -a "$PART_ROOT"
-
-        echo "Formatting EFI partition..."
-        mkfs.fat -F 32 -n nixos-boot "$PART_BOOT"
-
-        if [[ $FS_TYPE == "btrfs" ]]; then
-          echo "Formatting root as btrfs..."
-          mkfs.btrfs -f -L nixos-root "$PART_ROOT"
-
-          # Create subvolumes for granular snapshot and mount control.
-          mount "$PART_ROOT" "$MNT"
-          btrfs subvolume create "''${MNT}/@"
-          btrfs subvolume create "''${MNT}/@home"
-          btrfs subvolume create "''${MNT}/@nix"
-          btrfs subvolume create "''${MNT}/@tmp"
-          btrfs subvolume create "''${MNT}/@log"
+        if [[ $FS == "btrfs" ]]; then
+          mkfs.btrfs -f -L nixos-root "$ROOT"
+          mount "$ROOT" "$MNT"
+          for sv in @ @home @nix @tmp @log; do btrfs subvolume create "$MNT/$sv"; done
           umount "$MNT"
-
-          BTRFS_OPTS="noatime,compress=zstd:3,ssd,discard=async,space_cache=v2"
-
-          echo "Mounting btrfs subvolumes..."
-          mount -t btrfs -o "subvol=/@,''${BTRFS_OPTS}"     "$PART_ROOT" "$MNT"
-          mkdir -p "''${MNT}"/{home,nix,var/tmp,var/log,boot}
-          mount -t btrfs -o "subvol=/@home,''${BTRFS_OPTS}" "$PART_ROOT" "''${MNT}/home"
-          mount -t btrfs -o "subvol=/@nix,''${BTRFS_OPTS}"  "$PART_ROOT" "''${MNT}/nix"
-          mount -t btrfs -o "subvol=/@tmp,''${BTRFS_OPTS}"  "$PART_ROOT" "''${MNT}/var/tmp"
-          mount -t btrfs -o "subvol=/@log,''${BTRFS_OPTS}"  "$PART_ROOT" "''${MNT}/var/log"
-          mount -o umask=0077 "$PART_BOOT" "''${MNT}/boot"
-
+          OPTS="noatime,compress=zstd:3,ssd,discard=async,space_cache=v2"
+          mount -t btrfs -o "subvol=/@,$OPTS" "$ROOT" "$MNT"
+          mkdir -p "$MNT"/{home,nix,var/tmp,var/log,boot}
+          mount -t btrfs -o "subvol=/@home,$OPTS" "$ROOT" "$MNT/home"
+          mount -t btrfs -o "subvol=/@nix,$OPTS"  "$ROOT" "$MNT/nix"
+          mount -t btrfs -o "subvol=/@tmp,$OPTS"  "$ROOT" "$MNT/var/tmp"
+          mount -t btrfs -o "subvol=/@log,$OPTS"  "$ROOT" "$MNT/var/log"
+          mount -o umask=0077 "$BOOT" "$MNT/boot"
         else
-          echo "Formatting root as ext4..."
-          mkfs.ext4 -L nixos-root \
-            -E lazy_itable_init=0,lazy_journal_init=0 \
-            "$PART_ROOT"
-
-          echo "Mounting ext4 root..."
-          mount -t ext4 -o noatime,discard,errors=remount-ro "$PART_ROOT" "$MNT"
-          mkdir -p "''${MNT}/boot"
-          mount -o umask=0077 "$PART_BOOT" "''${MNT}/boot"
+          mkfs.ext4 -L nixos-root -E lazy_itable_init=0,lazy_journal_init=0 "$ROOT"
+          mount -t ext4 -o noatime,errors=remount-ro "$ROOT" "$MNT"
+          mkdir -p "$MNT/boot"
+          mount -o umask=0077 "$BOOT" "$MNT/boot"
         fi
 
-        echo ""
-        echo "Done! Partition layout:"
-        lsblk -o NAME,SIZE,FSTYPE,LABEL,MOUNTPOINT "$DISK"
-        echo ""
-        echo "Next: make swap-on then make install-nixos HOST=<host>"
+        echo "✓ Done. Layout:"; lsblk -o NAME,SIZE,FSTYPE,LABEL,MOUNTPOINT "$DISK"
+        echo "Next: make install-nixos HOST=<host>"
       '';
     };
 
-    mount-rescue = writeShellApplication {
-      name = "mount-rescue";
-      runtimeInputs = with pkgs; [util-linux btrfs-progs coreutils];
+    mount-rescue = mkLinuxApp "mount-rescue" {
+      runtimeInputs = with pkgs; [util-linux btrfs-progs];
       text = ''
-        if [[ $EUID -ne 0 ]]; then
-          echo "Error: must run as root"
-          exit 1
-        fi
-
         MNT="''${1:-/mnt}"
-
-        # Detect filesystem type from the partition label rather than guessing.
-        FS="$(blkid -s TYPE -o value /dev/disk/by-label/nixos-root 2>/dev/null || true)"
-        echo "Detected filesystem: ''${FS:-unknown}"
-
-        if [[ $FS == "btrfs" ]]; then
-          echo "Mounting btrfs subvolumes to ''${MNT}..."
-          mount -t btrfs -o subvol=/@ /dev/disk/by-label/nixos-root "$MNT"
-          mkdir -p "$MNT"/{home,nix,var/tmp,var/log,boot}
-          mount -t btrfs -o subvol=/@home /dev/disk/by-label/nixos-root "$MNT/home"
-          mount -t btrfs -o subvol=/@nix  /dev/disk/by-label/nixos-root "$MNT/nix"
-          mount -t btrfs -o subvol=/@tmp  /dev/disk/by-label/nixos-root "$MNT/var/tmp"
-          mount -t btrfs -o subvol=/@log  /dev/disk/by-label/nixos-root "$MNT/var/log"
-          mount /dev/disk/by-label/nixos-boot "$MNT/boot"
-
-        else
-          echo "Mounting ext4 root to ''${MNT}..."
-          mount -t ext4 -o noatime,errors=remount-ro \
-            /dev/disk/by-label/nixos-root "$MNT"
-          mkdir -p "$MNT/boot"
-          mount /dev/disk/by-label/nixos-boot "$MNT/boot"
-        fi
-
-        echo ""
-        echo "All filesystems mounted at ''${MNT}"
-        echo "Run: sudo nixos-enter --root $MNT"
+        FS="$(blkid -s TYPE -o value /dev/disk/by-label/nixos-root 2>/dev/null || echo ext4)"
+        echo "Detected: $FS"
+        ${mountRootScript "$FS"}
+        echo "Mounted at $MNT. Enter with: sudo nixos-enter --root $MNT"
       '';
     };
 
-    troubleshoot = writeShellApplication {
-      name = "troubleshoot";
-      runtimeInputs = with pkgs; [util-linux btrfs-progs coreutils nixos-install-tools];
+    troubleshoot = mkLinuxApp "troubleshoot" {
+      runtimeInputs = with pkgs; [util-linux btrfs-progs nixos-install-tools];
       text = ''
         MNT="''${1:-/mnt}"
-
-        if [[ $EUID -ne 0 ]]; then
-          echo "Error: must run as root"
-          exit 1
-        fi
-
-        FS="$(blkid -s TYPE -o value /dev/disk/by-label/nixos-root 2>/dev/null || true)"
-        echo "Detected filesystem: ''${FS:-unknown}"
-        echo "Mounting rescue environment at ''${MNT}..."
-
-        if [[ $FS == "btrfs" ]]; then
-          mount -t btrfs -o subvol=/@ /dev/disk/by-label/nixos-root "$MNT"
-          mkdir -p "$MNT"/{home,nix,var/tmp,var/log,boot}
-          mount -t btrfs -o subvol=/@home /dev/disk/by-label/nixos-root "$MNT/home"
-          mount -t btrfs -o subvol=/@nix  /dev/disk/by-label/nixos-root "$MNT/nix"
-          mount -t btrfs -o subvol=/@tmp  /dev/disk/by-label/nixos-root "$MNT/var/tmp"
-          mount -t btrfs -o subvol=/@log  /dev/disk/by-label/nixos-root "$MNT/var/log"
-          mount /dev/disk/by-label/nixos-boot "$MNT/boot"
-
-        else
-          mount -t ext4 -o noatime,errors=remount-ro \
-            /dev/disk/by-label/nixos-root "$MNT"
-          mkdir -p "$MNT/boot"
-          mount /dev/disk/by-label/nixos-boot "$MNT/boot"
-        fi
-
-        echo "Entering NixOS environment..."
-        nixos-enter --root "$MNT"
+        FS="$(blkid -s TYPE -o value /dev/disk/by-label/nixos-root 2>/dev/null || echo ext4)"
+        echo "Detected: $FS"
+        ${mountRootScript "$FS"}
+        echo "Entering NixOS..."; exec nixos-enter --root "$MNT"
       '';
     };
   }
