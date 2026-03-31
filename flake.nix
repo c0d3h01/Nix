@@ -73,19 +73,23 @@
       (lib.mapAttrs (_: h: h.nixos) hosts);
 
     # Standalone Home Manager configurations.
-    homeConfigurations = lib.mapAttrs' (
-      _: h: lib.nameValuePair "${h.meta.username}@${h.meta.hostname}" h.home
-    )
-    hosts;
+    homeConfigurations =
+      lib.mapAttrs' (
+        _: h: lib.nameValuePair "${h.meta.username}@${h.meta.hostname}" h.home
+      )
+      hosts;
 
     # Dev tools
     devShells = eachSystem (system: {
       default = import ./lib/shell.nix {
         pkgs = mkPkgs system;
-        inherit ((import ./lib/formatter.nix {
+        inherit
+          ((import ./lib/formatter.nix {
             inherit self;
             pkgs = mkPkgs system;
-          })) formatter;
+          }))
+          formatter
+          ;
       };
     });
 
