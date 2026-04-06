@@ -1,8 +1,7 @@
-{ inputs, ... }: let
+{inputs, ...}: let
   sshKeys = [
     "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAICSjL8HGjiSAnLHupMZin095bql7A8+UDfc7t9XCZs8l c0d3h01"
   ];
-
 in {
   imports = [
     # Disko integration for disk partitioning
