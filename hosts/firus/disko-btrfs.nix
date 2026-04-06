@@ -24,7 +24,7 @@
             content = {
               type = "swap";
               discardPolicy = "both";
-              resumeDevice = false;
+              resumeDevice = true;
             };
           };
 
