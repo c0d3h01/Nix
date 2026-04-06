@@ -11,7 +11,7 @@ in {
   environment.systemPackages = with pkgs;
     mkIf isWorkstation [
       vscode-fhs
-      antigravity-fhs
-      chromium
+      # antigravity-fhs
+      # chromium
     ];
 }
