@@ -25,6 +25,13 @@ partition:
 install-nix:
 	nix $(NIX_FLAGS) run .#install-nix
 
+install-disko:
+	sudo nix --experimental-features "nix-command flakes" run \
+		github:nix-community/disko/latest -- \
+		--mode destroy,format,mount \
+		--yes-wipe-all-disks \
+		--flake "github:c0d3h01/nix#firus"
+
 install-nixos:
 	sudo nixos-install --flake ".#$(HOST)" --no-root-passwd
 
