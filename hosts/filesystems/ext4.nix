@@ -6,7 +6,7 @@
   };
 
   fileSystems.swapDevices = [
-    { device = "/dev/disk/by-label/nix-swap"; }
+    {device = "/dev/disk/by-label/nix-swap";}
   ];
 
   fileSystems."/" = {
