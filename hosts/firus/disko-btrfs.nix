@@ -20,7 +20,7 @@
 
           plainSwap = {
             label = "nixos-swap";
-            size = "8G";
+            size = "4G";
             content = {
               type = "swap";
               discardPolicy = "both";
