@@ -1,22 +1,19 @@
-{pkgs, ...}: {
+{
   programs.ghostty = {
-    enable = false;
-    package = pkgs.ghostty;
+
+    enable = true;
     enableBashIntegration = true;
     enableZshIntegration = true;
 
     settings = {
-      theme = "Solarized Dark Patched";
-      font-family = "JetBrainsMono Nerd Font";
+      theme = "Gruvbox Dark Hard";
       font-size = 13.0;
-
       clipboard-read = "allow";
       clipboard-write = "allow";
       confirm-close-surface = false;
       gtk-titlebar = true;
       background-opacity = 0.85;
       background-blur-radius = 20;
-
       macos-non-native-fullscreen = false;
       macos-option-as-alt = true;
       mouse-hide-while-typing = true;

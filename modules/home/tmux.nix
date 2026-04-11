@@ -1,7 +1,7 @@
 {pkgs, ...}: {
   programs.tmux = {
-    enable = true;
 
+    enable = true;
     plugins = with pkgs; [
       tmuxPlugins.sensible
       tmuxPlugins.yank

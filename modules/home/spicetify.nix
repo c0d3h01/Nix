@@ -17,8 +17,6 @@ in {
       spicePkgs = inputs.spicetify-nix.legacyPackages.${pkgs.stdenv.hostPlatform.system};
     in {
       enable = true;
-      theme = spicePkgs.themes.sleek;
-      colorScheme = "Nord";
 
       enabledCustomApps = with spicePkgs.apps; [
         ncsVisualizer

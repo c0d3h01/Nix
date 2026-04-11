@@ -1,6 +1,5 @@
 {
   imports = [
-    ./alacritty.nix
     ./bash.nix
     ./bat.nix
     ./delta.nix
@@ -8,7 +7,6 @@
     ./direnv.nix
     ./eza.nix
     ./fd.nix
-    ./fonts.nix
     ./fzf.nix
     ./gh.nix
     ./ghostty.nix
@@ -18,16 +16,15 @@
     ./htop.nix
     ./kitty.nix
     ./lazygit.nix
-    ./lsd.nix
     ./nix-your-shell.nix
     ./nixvim.nix
     ./ripgrep.nix
     ./secrets.nix
     ./spicetify.nix
     ./starship.nix
+    ./stylix.nix
     ./tmux.nix
     ./vesktop.nix
-    ./wezterm.nix
     ./yt-dlp.nix
     ./zoxide.nix
     ./zsh.nix

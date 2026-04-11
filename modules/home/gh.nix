@@ -1,7 +1,7 @@
 {
   programs.gh = {
-    enable = true;
 
+    enable = true;
     settings = {
       editor = "nvim";
       git_protocol = "ssh";

@@ -1,7 +1,7 @@
 {
   programs.lazygit = {
-    enable = true;
 
+    enable = true;
     settings = {
       confirmOnQuit = false;
 

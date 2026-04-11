@@ -18,12 +18,12 @@ in {
 
       cursorTheme = {
         package = pkgs.kdePackages.breeze;
-        name = "Breeze_Light";
+        name = "Breeze-Dark";
       };
 
       iconTheme = {
         package = pkgs.kdePackages.breeze-icons;
-        name = "breeze-dark";
+        name = "Breeze-Dark";
       };
 
       gtk2 = {
@@ -50,19 +50,19 @@ in {
       enable = true;
 
       theme = {
-        name = "Orchis-Dark";
-        package = pkgs.orchis-theme;
+        name = "Adwaita-dark";
+        package = pkgs.gnome-themes-extra;
       };
 
       cursorTheme = {
-        name = "Bibata-Modern-Ice";
+        name = "Adwaita";
+        package = pkgs.adwaita-icon-theme;
         size = 24;
-        package = pkgs.bibata-cursors;
       };
 
       iconTheme = {
-        name = "Tela-circle";
-        package = pkgs.tela-circle-icon-theme;
+        name = "Adwaita";
+        package = pkgs.adwaita-icon-theme;
       };
 
       gtk3.extraConfig = {

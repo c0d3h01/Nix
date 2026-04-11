@@ -4,8 +4,8 @@
   ];
 
   programs.yt-dlp = {
-    enable = true;
 
+    enable = true;
     settings = {
       embed-thumbnail = true;
       embed-subs = true;

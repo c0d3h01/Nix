@@ -1,6 +1,4 @@
-{pkgs, ...}: let
-  gpgBin = "${pkgs.gnupg}/bin/gpg";
-in {
+{pkgs, ...}: {
   programs.gpg = {
     enable = true;
 
@@ -57,7 +55,7 @@ in {
         email = "harshalsawant.dev@gmail.com";
       };
 
-      gpg.program = gpgBin;
+      gpg.program = "${pkgs.gnupg}/bin/gpg";
       tag.gpgSign = true;
 
       init.defaultBranch = "main";
@@ -75,16 +73,6 @@ in {
 
       credential.helper = "store --file ~/.git-credentials";
       url."git@github.com:".insteadOf = "https://github.com/";
-    };
-  };
-
-  programs.delta = {
-    enable = true;
-    options = {
-      navigate = true;
-      side-by-side = false;
-      line-numbers = true;
-      syntax-theme = "base16";
     };
   };
 }

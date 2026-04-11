@@ -1,12 +1,7 @@
-{pkgs, ...}: {
-  home.packages = with pkgs; [
-    kitty-themes
-  ];
-
+{
   programs.kitty = {
-    enable = true;
-    package = pkgs.kitty;
 
+    enable = false;
     keybindings = {
       "ctrl+shift+c" = "copy_to_clipboard";
       "ctrl+shift+v" = "paste_from_clipboard";

@@ -1,7 +1,7 @@
 {
   programs.ripgrep = {
-    enable = true;
 
+    enable = true;
     arguments = [
       "--max-columns=150"
       "--max-columns-preview"
