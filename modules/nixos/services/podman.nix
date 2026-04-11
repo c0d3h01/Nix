@@ -16,13 +16,9 @@
     };
   };
 
-  users.users.${hostConfig.username}.autoSubUidGidRange = true;
-
   environment.systemPackages = with pkgs; [
-    podman-desktop
     podman-compose
     docker-buildx
-    skopeo
     kubectl
   ];
 }

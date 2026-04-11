@@ -12,7 +12,7 @@ in {
 
     services = {
       # Dynamically tunes kernel BPF parameters for network and latency optimization
-      bpftune.enable = true;
+      bpftune.enable = false;
 
       # Distributes hardware interrupts across CPU cores to reduce latency spikes
       irqbalance.enable = true;
