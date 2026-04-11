@@ -1,6 +1,5 @@
 {
   programs.kitty = {
-
     enable = false;
     keybindings = {
       "ctrl+shift+c" = "copy_to_clipboard";

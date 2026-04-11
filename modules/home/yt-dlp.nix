@@ -4,7 +4,6 @@
   ];
 
   programs.yt-dlp = {
-
     enable = true;
     settings = {
       embed-thumbnail = true;

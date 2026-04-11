@@ -1,6 +1,5 @@
 {
   programs.vesktop = {
-
     enable = true;
     settings = {
       appBadge = false;
