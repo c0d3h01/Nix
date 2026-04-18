@@ -11,7 +11,7 @@
     ./gh.nix
     ./ghostty.nix
     ./git.nix
-    ./gtk.nix
+    # ./gtk.nix
     ./home.nix
     ./htop.nix
     ./kitty.nix
