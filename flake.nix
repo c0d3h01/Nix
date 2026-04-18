@@ -34,48 +34,49 @@
           inputs.nur.overlays.default
         ];
       };
-  in {
-    nixosConfigurations = eachSystem (system: {
-      c0d3h01 = nixpkgs.lib.nixosSystem {
-        inherit system;
-        modules = [
-          ./modules/nixos
-          inputs.home-manager.nixosModules.home-manager
-          {
-            home-manager = {
-              useGlobalPkgs = true;
-              useUserPackages = true;
-              backupFileExtension = "backup";
-              users.c0d3h01.imports = [./modules/home];
-            };
-          }
-        ];
-      };
-    });
 
-    homeConfigurations = eachSystem (system: {
-      c0d3h01 = inputs.home-manager.lib.homeManagerConfiguration {
+    mkFormatter = system:
+      import ./formatter.nix {
+        inherit self;
         pkgs = mkPkgs system;
-        modules = [./modules/home];
       };
-    });
+  in {
+    nixosConfigurations.c0d3h01 = nixpkgs.lib.nixosSystem {
+      system = "x86_64-linux";
+      modules = [
+        ./modules/nixos
+        inputs.home-manager.nixosModules.home-manager
+        {
+          home-manager = {
+            useGlobalPkgs = true;
+            useUserPackages = true;
+            backupFileExtension = "backup";
+            users.c0d3h01.imports = [./modules/home];
+          };
+        }
+      ];
+    };
+
+    homeConfigurations.c0d3h01 = inputs.home-manager.lib.homeManagerConfiguration {
+      pkgs = mkPkgs "x86_64-linux";
+      modules = [./modules/home];
+    };
 
     devShells = eachSystem (system: {
-      default = import ./shell.nix {inherit (mkPkgs system) pkgs;};
+      default = let
+        pkgs = mkPkgs system;
+      in
+        import ./shell.nix {
+          inherit pkgs;
+          formatter = (mkFormatter system).formatter;
+        };
     });
 
     formatter = eachSystem (system:
-      (import ./formatter.nix {
-        inherit self;
-        pkgs = mkPkgs system;
-      }).formatter);
+      (mkFormatter system).formatter);
 
     checks = eachSystem (system: {
-      formatting =
-        (import ./formatter.nix {
-          inherit self;
-          pkgs = mkPkgs system;
-        }).check;
+      formatting = (mkFormatter system).check;
     });
   };
 }
