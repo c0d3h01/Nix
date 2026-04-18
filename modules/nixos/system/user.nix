@@ -33,7 +33,12 @@
   users.defaultUserShell = pkgs.zsh;
 
   # Primary User Configuration
-  users.groups.${hostConfig.username} = {};
+  # users.groups.${hostConfig.username} = {};
+  users.groups = {
+    root = {};
+    c0d3h01 = {};
+    anon = {};
+  };
 
   # User Configuration
   users.users.${hostConfig.username} = {
