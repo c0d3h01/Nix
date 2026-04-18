@@ -4,56 +4,38 @@
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
     systems.url = "github:nix-systems/default";
-
-    disko = {
-      url = "github:nix-community/disko";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
-
-    home-manager = {
-      url = "github:nix-community/home-manager";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
-
-    sops-nix = {
-      url = "github:Mic92/sops-nix";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
-
-    spicetify-nix = {
-      url = "github:Gerg-L/spicetify-nix";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
-
-    nur = {
-      url = "github:nix-community/NUR";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
-
-    nixvim = {
-      url = "github:nix-community/nixvim";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
-
-    stylix = {
-      url = "github:nix-community/stylix";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
+    disko.url = "github:nix-community/disko";
+    home-manager.url = "github:nix-community/home-manager";
+    sops-nix.url = "github:Mic92/sops-nix";
+    spicetify-nix.url = "github:Gerg-L/spicetify-nix";
+    nur.url = "github:nix-community/NUR";
+    nixvim.url = "github:nix-community/nixvim";
+    stylix.url = "github:nix-community/stylix";
   };
 
   outputs = { self, nixpkgs, systems, ... }@inputs: let
-    eachSystem = systems.lib.genAttrs [ "x86_64-linux" ];
+    # Systems to access its lib
+    sysLib = import systems { inherit inputs; };
 
+    # Supported systems
+    supportedSystems = [ "x86_64-linux" ];
+
+    # Helper to generate per-system attributes
+    eachSystem = sysLib.genAttrs supportedSystems;
+
+    # Package set with overlays and config
     mkPkgs = system:
       import nixpkgs {
         inherit system;
         config.allowUnfree = true;
-        overlays = [ inputs.nur.overlays.default ];
+        overlays = [
+          inputs.nur.overlays.default
+        ];
       };
   in {
-    nixosConfigurations = {
+    nixosConfigurations = eachSystem (system: {
       c0d3h01 = nixpkgs.lib.nixosSystem {
-        system = "x86_64-linux";
+        inherit system;
         modules = [
           ./modules/nixos
           inputs.home-manager.nixosModules.home-manager {
@@ -66,14 +48,14 @@
           }
         ];
       };
-    };
+    });
 
-    homeConfigurations = {
+    homeConfigurations = eachSystem (system: {
       c0d3h01 = inputs.home-manager.lib.homeManagerConfiguration {
-        pkgs = mkPkgs "x86_64-linux";
+        pkgs = mkPkgs system;
         modules = [ ./modules/home ];
       };
-    };
+    });
 
     devShells = eachSystem (system: {
       default = import ./shell.nix { inherit (mkPkgs system) pkgs; };
