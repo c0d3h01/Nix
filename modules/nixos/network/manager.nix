@@ -3,7 +3,7 @@
   lib,
   ...
 }: let
-  inherit (lib) mkDefault;
+  inherit (lib) mkDefault mkForce;
 in {
   environment.systemPackages = [
     pkgs.networkmanagerapplet
