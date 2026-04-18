@@ -44,6 +44,9 @@
   in {
     nixosConfigurations.c0d3h01 = nixpkgs.lib.nixosSystem {
       system = primarySystem;
+      specialArgs = {
+        inherit inputs self;
+      };
       modules = [
         ./modules/nixos
         inputs.home-manager.nixosModules.home-manager
@@ -52,6 +55,9 @@
             useGlobalPkgs = true;
             useUserPackages = true;
             backupFileExtension = "backup";
+            extraSpecialArgs = {
+              inherit inputs self;
+            };
             users.c0d3h01.imports = [./modules/home];
           };
         }
@@ -60,6 +66,9 @@
 
     homeConfigurations.c0d3h01 = inputs.home-manager.lib.homeManagerConfiguration {
       pkgs = mkPkgs primarySystem;
+      extraSpecialArgs = {
+        inherit inputs self;
+      };
       modules = [./modules/home];
     };
 
