@@ -1,18 +1,14 @@
 {
   config,
-  lib,
   pkgs,
   inputs,
-  hostConfig,
   ...
-}: let
-  inherit (lib) mkIf;
-in {
+}: {
   imports = [
     inputs.spicetify-nix.homeManagerModules.default
   ];
 
-  config.programs.spicetify = mkIf (hostConfig.workstation or false) (
+  programs.spicetify = (
     let
       spicePkgs = inputs.spicetify-nix.legacyPackages.${pkgs.stdenv.hostPlatform.system};
     in {

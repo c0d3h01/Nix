@@ -1,6 +1,5 @@
 {
   pkgs,
-  hostConfig,
   ...
 }: {
   virtualisation.podman = {

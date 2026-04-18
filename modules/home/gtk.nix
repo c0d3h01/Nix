@@ -2,13 +2,12 @@
   config,
   pkgs,
   lib,
-  hostConfig,
   ...
 }: let
   inherit (lib) mkIf;
 in {
   gtk = lib.mkMerge [
-    (mkIf (hostConfig.windowManager == "plasma") {
+    (mkIf config.services.kdeDesktop.enable {
       enable = true;
 
       theme = {
@@ -46,7 +45,7 @@ in {
       };
     })
 
-    (mkIf (hostConfig.windowManager == "gnome") {
+    (mkIf config.services.gnomeDesktop.enable {
       enable = true;
 
       theme = {
