@@ -13,7 +13,11 @@
     ./plasma.nix
     ./printing.nix
     ./secrets.nix
-    ./user.nix
+    ./users.nix
     ./xserver.nix
   ];
+
+  # Desktop envrionment toggle
+  services.kdeDesktop.enable = false;
+  services.gnomeDesktop.enable = true;
 }

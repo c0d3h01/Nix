@@ -1,8 +1,11 @@
 {
   pkgs,
-  hostConfig,
   ...
 }: {
+  imports = [
+    ../filesystems/btrfs.nix
+  ];
+
   # Identity & Time
   networking.hostName = "nixos";
   time.timeZone = "Asia/Kolkata";
@@ -33,11 +36,18 @@
 
   # User Configuration
   users.users = {
+    root = {
+      hashedPassword = "$y$j9T$KAIygNaHsr4EgJcn2Jto.1$9gK08qEPSw/Fll//2TCe5ijYIqavtnvoundIux8Uy5/";
+    };
+
     c0d3h01 = {
+      home = "/home/c0d3h01";
       isNormalUser = true;
-      createHome = true;
       description = "Harshal Sawant";
       shell = pkgs.zsh;
+
+      hashedPassword = "$y$j9T$jbMpDi1jashn36Vczb8jO/$E8M0edjvWOZg24Su5bFWaQ5tHcPkwyQ8HdzkAMx0km7";
+      openssh.authorizedKeys.keys = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAICSjL8HGjiSAnLHupMZin095bql7A8+UDfc7t9XCZs8l";
 
       extraGroups = [
         "wheel"
@@ -47,9 +57,11 @@
     };
 
     anon = {
+      home = "/home/anon";
       isNormalUser = true;
-      createHome = true;
-      description = "Anony";
+      description = "Anon";
+
+      hashedPassword = "$y$j9T$IKXrH64o2Ni7mqraKV6ke/$3FtfHxmcWPIKaziQ40uzjdyMeFBZsDRWGmAeq9KbBb2";
 
       extraGroups = [
         "networkmanager"

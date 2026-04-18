@@ -5,6 +5,5 @@
     ./network
     ./services
     ./system
-    ./profile.nix
   ];
 }
