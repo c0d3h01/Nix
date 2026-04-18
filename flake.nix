@@ -41,79 +41,48 @@
     };
   };
 
-  outputs = {
-    self,
-    nixpkgs,
-    systems,
-    ...
-  } @ inputs: let
-    inherit (nixpkgs) lib;
+  outputs = { self, nixpkgs, systems, ... }@inputs: {
+    eachSystem = systems.lib.genAttrs [ "x86_64-linux" ];
 
-    system = "x86_64-linux";
-
-    mkPkgs = sys:
+    mkPkgs = system:
       import nixpkgs {
-        system = sys;
+        inherit system;
         config.allowUnfree = true;
-        overlays = [inputs.nur.overlays.default];
+        overlays = [ inputs.nur.overlays.default ];
       };
 
-    eachSystem = f: lib.genAttrs (import systems) f;
-
-    specialArgs = {inherit inputs self system;};
-  in {
-    nixosConfigurations.default = lib.nixosSystem {
-      inherit system specialArgs;
-      modules = [
-        ./modules/nixos
-        inputs.home-manager.nixosModules.home-manager
-        {
-          home-manager = {
-            useGlobalPkgs = true;
-            useUserPackages = true;
-            backupFileExtension = "backup";
-            extraSpecialArgs = specialArgs;
-            users."c0d3h01".imports = [./modules/home];
-          };
-        }
-      ];
-    };
-
-    homeConfigurations.default = inputs.home-manager.lib.homeManagerConfiguration {
-      pkgs = mkPkgs system;
-      extraSpecialArgs = specialArgs;
-      modules = [./modules/home];
-    };
-
-    devShells = eachSystem (sys: {
-      default = import ./shell.nix {
-        pkgs = mkPkgs sys;
-        inherit
-          ((import ./formatter.nix {
-            inherit self;
-            pkgs = mkPkgs sys;
-          }))
-          formatter
-          ;
+    nixosConfigurations = {
+      c0d3h01 = nixpkgs.lib.nixosSystem {
+        system = "x86_64-linux";
+        modules = [
+          ./modules/nixos
+          inputs.home-manager.nixosModules.home-manager {
+            home-manager = {
+              useGlobalPkgs = true;
+              useUserPackages = true;
+              backupFileExtension = "backup";
+              users.c0d3h01.imports = [ ./modules/home ];
+            };
+          }
+        ];
       };
+    };
+
+    homeConfigurations = {
+      c0d3h01 = inputs.home-manager.lib.homeManagerConfiguration {
+        pkgs = mkPkgs "x86_64-linux";
+        modules = [ ./modules/home ];
+      };
+    };
+
+    devShells = eachSystem (system: {
+      default = import ./shell.nix { inherit (mkPkgs system) pkgs; };
     });
 
-    formatter = eachSystem (
-      sys:
-        (import ./formatter.nix {
-          inherit self;
-          pkgs = mkPkgs sys;
-        }).formatter
-    );
+    formatter = eachSystem (system: (import ./formatter.nix { inherit self; pkgs = mkPkgs system; }).formatter);
 
-    checks = eachSystem (sys: {
-      formatting =
-        (import ./formatter.nix {
-          inherit self;
-          pkgs = mkPkgs sys;
-        }).check;
+    checks = eachSystem (system: {
+      formatting = (import ./formatter.nix { inherit self; pkgs = mkPkgs system; }).check;
     });
-
-    packages = eachSystem (sys: import ./scripts.nix {pkgs = mkPkgs sys;});
   };
 }
