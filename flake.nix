@@ -88,10 +88,13 @@
     devShells = eachSystem (sys: {
       default = import ./shell.nix {
         pkgs = mkPkgs sys;
-        inherit ((import ./formatter.nix {
+        inherit
+          ((import ./formatter.nix {
             inherit self;
             pkgs = mkPkgs sys;
-          })) formatter;
+          }))
+          formatter
+          ;
       };
     });
 

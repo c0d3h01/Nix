@@ -1,7 +1,4 @@
-{
-  pkgs,
-  ...
-}: {
+{pkgs, ...}: {
   users.users.c0d3h01.extraGroups = ["wireshark"];
 
   programs.wireshark = {

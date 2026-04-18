@@ -1,7 +1,4 @@
-{
-  pkgs,
-  ...
-}: {
+{pkgs, ...}: {
   users.users.c0d3h01.extraGroups = [
     "plugdev" # USB devices (Android, Microcontrollers)
     "adbusers" # Android Debug Bridge
