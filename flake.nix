@@ -49,78 +49,56 @@
   } @ inputs: let
     inherit (nixpkgs) lib;
 
-    # Instantiate pkgs for a given system with shared config.
-    mkPkgs = system:
-      import nixpkgs {
-        inherit system;
-        config.allowUnfree = true;
-        overlays = [inputs.nur.overlays.default];
-      };
+    system = "x86_64-linux";
 
-    # eachSystem replaces flake-utils.lib.eachDefaultSystem using the
-    eachSystem = f:
-      lib.genAttrs (import systems) f;
-
-    mkHost = import ./lib/mkHost.nix {inherit inputs self;};
-
-    # Host definitions
-    hosts = {
-      nixos = mkHost {
-        hostname = "nixos";
-        username = "anon";
-        fullName = "Harshal Sawant";
-        system = "x86_64-linux";
-        bootloader = "grub";
-        windowManager = "gnome";
-        nixosModules = [./hosts/nixos];
-      };
+    mkPkgs = sys: import nixpkgs {
+      system = sys;
+      config.allowUnfree = true;
+      overlays = [ inputs.nur.overlays.default ];
     };
+
+    eachSystem = f: lib.genAttrs (import systems) f;
+
+    specialArgs = { inherit inputs self system; };
   in {
-    # NixOS systems
-    nixosConfigurations =
-      lib.filterAttrs (_: v: v != null)
-      (lib.mapAttrs (_: h: h.nixos) hosts);
+    nixosConfigurations.default = lib.nixosSystem {
+      inherit system specialArgs;
+      modules = [
+        ./modules/nixos
+        inputs.home-manager.nixosModules.home-manager
+        {
+          home-manager = {
+            useGlobalPkgs = true;
+            useUserPackages = true;
+            backupFileExtension = "backup";
+            extraSpecialArgs = specialArgs;
+            users."c0d3h01".imports = [ ./modules/home ];
+          };
+        }
+      ];
+    };
 
-    # Standalone Home Manager configurations.
-    homeConfigurations =
-      lib.mapAttrs' (
-        _: h: lib.nameValuePair "${h.meta.username}@${h.meta.hostname}" h.home
-      )
-      hosts;
+    homeConfigurations.default = inputs.home-manager.lib.homeManagerConfiguration {
+      pkgs = mkPkgs system;
+      extraSpecialArgs = specialArgs;
+      modules = [ ./modules/home ];
+    };
 
-    # Dev tools
-    devShells = eachSystem (system: {
+    devShells = eachSystem (sys: {
       default = import ./shell.nix {
-        pkgs = mkPkgs system;
-        inherit
-          ((import ./lib/formatter.nix {
-            inherit self;
-            pkgs = mkPkgs system;
-          }))
-          formatter
-          ;
+        pkgs = mkPkgs sys;
+        formatter = (import ./formatter.nix { inherit self; pkgs = mkPkgs sys; }).formatter;
       };
     });
 
-    formatter = eachSystem (
-      system:
-        (import ./lib/formatter.nix {
-          inherit self;
-          pkgs = mkPkgs system;
-        }).formatter
+    formatter = eachSystem (sys:
+      (import ./formatter.nix { inherit self; pkgs = mkPkgs sys; }).formatter
     );
 
-    checks = eachSystem (system: {
-      formatting =
-        (import ./lib/formatter.nix {
-          inherit self;
-          pkgs = mkPkgs system;
-        }).check;
+    checks = eachSystem (sys: {
+      formatting = (import ./formatter.nix { inherit self; pkgs = mkPkgs sys; }).check;
     });
 
-    packages = eachSystem (
-      system:
-        import ./lib/scripts.nix {pkgs = mkPkgs system;}
-    );
+    packages = eachSystem (sys: import ./scripts.nix { pkgs = mkPkgs sys; });
   };
 }
