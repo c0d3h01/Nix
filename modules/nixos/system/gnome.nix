@@ -1,5 +1,9 @@
-{ config, pkgs, lib, ... }:
-let
+{
+  config,
+  pkgs,
+  lib,
+  ...
+}: let
   cfg = config.services.gnomeDesktop;
 in {
   options.services.gnomeDesktop = {
@@ -28,11 +32,11 @@ in {
     # GSConnect is a GNOME Shell extension, not a drop-in package replacement.
     # This is the idiomatic NixOS way to enable it.
     programs.kdeconnect.enable = true;
-    environment.gnome.extraExtensions = [ pkgs.gnomeExtensions.gsconnect ];
+    environment.gnome.extraExtensions = [pkgs.gnomeExtensions.gsconnect];
 
     networking.firewall = lib.mkIf config.networking.firewall.enable {
-      allowedTCPPorts = [ 1716 ];
-      allowedUDPPorts = [ 1716 ];
+      allowedTCPPorts = [1716];
+      allowedUDPPorts = [1716];
     };
 
     environment.systemPackages = with pkgs; [

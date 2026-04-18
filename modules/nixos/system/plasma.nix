@@ -1,5 +1,9 @@
-{ config, pkgs, lib, ... }:
-let
+{
+  config,
+  pkgs,
+  lib,
+  ...
+}: let
   cfg = config.services.kdeDesktop;
 in {
   options.services.kdeDesktop = {
@@ -25,8 +29,8 @@ in {
     programs.kdeconnect.enable = true;
 
     networking.firewall = lib.mkIf config.networking.firewall.enable {
-      allowedTCPPorts = [ 1716 ];
-      allowedUDPPorts = [ 1716 ];
+      allowedTCPPorts = [1716];
+      allowedUDPPorts = [1716];
     };
 
     environment.systemPackages = with pkgs; [
