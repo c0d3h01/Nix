@@ -25,10 +25,10 @@
     "oops=panic"
 
     # only allow signed modules
-    "module.sig_enforce=1"
+    # "module.sig_enforce=1"
 
     # blocks access to all kernel memory, even preventing administrators from being able to inspect and probe the kernel
-    "lockdown=confidentiality"
+    # "lockdown=confidentiality"
 
     # enable buddy allocator free poisoning
     "page_poison=on"
@@ -37,7 +37,7 @@
     "page_alloc.shuffle=1"
 
     # for debugging kernel-level slab issues
-    "slub_debug=FZP"
+    # "slub_debug=FZP"
 
     # disable sysrq keys. sysrq is seful for debugging, but also insecure
     "sysrq_always_enabled=0" # 0 | 1 # 0 means disabled
@@ -49,7 +49,7 @@
     "lsm=landlock,lockdown,yama,integrity,apparmor,bpf,tomoyo,selinux"
 
     # prevent the kernel from blanking plymouth out of the fb
-    "fbcon=nodefer"
+    # "fbcon=nodefer"
 
     # https://en.wikipedia.org/wiki/Kernel_page-table_isolation
     # auto means kernel will automatically decide the pti state
@@ -64,7 +64,7 @@
     # disable usb autosuspend
     "usbcore.autosuspend=-1"
 
-    # isables resume and restores original swap space
+    # swap: resume and restores original swap space
     "noresume"
 
     # allow systemd to set and save the backlight state
@@ -74,7 +74,7 @@
     "fbcon=nodefer"
 
     # disable boot logo
-    "logo.nologo"
+    # "logo.nologo"
 
     # disable the cursor in vt to get a black screen during intermissions
     "vt.global_cursor_default=0"
