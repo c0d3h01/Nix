@@ -32,7 +32,7 @@ check:
 	nix $(NIX_FLAGS) flake check --all-systems
 
 fmt:
-	nix $(NIX_FLAGS) fmt
+	nix $(NIX_FLAGS) fmt .
 
 clean:
 	sudo nix-collect-garbage -d

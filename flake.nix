@@ -49,10 +49,8 @@
     nur,
     ...
   } @ inputs: let
-    # Shared args passed into every NixOS module and HM module
     specialArgs = {inherit inputs self;};
 
-    # Common nixpkgs config reused across hosts and standalone HM
     mkPkgs = system:
       import nixpkgs {
         inherit system;
@@ -60,7 +58,6 @@
         overlays = [nur.overlays.default];
       };
   in
-    # System-scoped outputs: devShells, formatter, packages, checks
     flake-utils.lib.eachDefaultSystem (system: let
       pkgs = mkPkgs system;
     in {
@@ -83,16 +80,18 @@
 
       formatter = pkgs.alejandra;
     })
-    # Non-system-scoped outputs: nixosConfigurations, homeConfigurations
-    # These are NEVER wrapped in eachSystem
     // {
       nixosConfigurations = {
-        # Add new hosts here: hostname = mkNixosSystem { ... };
         nixos = nixpkgs.lib.nixosSystem {
           system = "x86_64-linux";
           inherit specialArgs;
           modules = [
-            {nixpkgs = {config.allowUnfree = true; overlays = [nur.overlays.default];};}
+            {
+              nixpkgs = {
+                config.allowUnfree = true;
+                overlays = [nur.overlays.default];
+              };
+            }
             ./modules/nixos
             home-manager.nixosModules.home-manager
             {
@@ -109,8 +108,6 @@
       };
 
       homeConfigurations = {
-        # Standalone HM: used when NixOS is NOT the host (e.g. Ubuntu, macOS)
-        # Activate with: home-manager switch --flake .#c0d3h01
         "nixos" = home-manager.lib.homeManagerConfiguration {
           pkgs = mkPkgs "x86_64-linux";
           extraSpecialArgs = specialArgs;
