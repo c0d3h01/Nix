@@ -1,29 +1,22 @@
 HOST ?= nixos
 DISK ?= /dev/nvme0n1
-MNT  ?= /mnt
 USER ?= $(shell whoami)
 
 MAKEFLAGS += --no-print-directory
 NIX_FLAGS := --extra-experimental-features "nix-command flakes"
 
-.PHONY: help rebuild home partition install-nix install-nixos mount-rescue troubleshoot check fmt clean
+.PHONY: help rebuild home install-disko install-nixos check fmt clean
 
 help:
 	@echo "Usage: make <target> [HOST=<host>]"
 	@echo "Defaults: HOST=$(HOST), USER=$(USER), DISK=$(DISK)"
-	@echo "Targets: rebuild, home, partition, install-nix, install-nixos, mount-rescue, troubleshoot, check, fmt, clean"
+	@echo "Targets: rebuild, home, install-disko, install-nixos, check, fmt, clean"
 
 rebuild:
 	sudo nixos-rebuild switch --flake ".#$(HOST)"
 
 home:
 	home-manager $(NIX_FLAGS) switch --flake ".#$(USER)@$(HOST)"
-
-partition:
-	sudo nix $(NIX_FLAGS) run .#partition -- $(DISK) $(MNT)
-
-install-nix:
-	nix $(NIX_FLAGS) run .#install-nix
 
 install-disko:
 	sudo nix --experimental-features "nix-command flakes" run \
@@ -34,12 +27,6 @@ install-disko:
 
 install-nixos:
 	sudo nixos-install --flake ".#$(HOST)" --no-root-passwd
-
-mount-rescue:
-	sudo nix $(NIX_FLAGS) run .#mount-rescue -- $(MNT)
-
-troubleshoot:
-	sudo nix $(NIX_FLAGS) run .#troubleshoot -- $(MNT)
 
 check:
 	nix $(NIX_FLAGS) flake check --all-systems
