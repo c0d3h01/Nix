@@ -1,6 +1,7 @@
-{pkgs, ...}: {
+{pkgs, inputs, ...}: {
   imports = [
-    ../filesystems/btrfs.nix
+    inputs.disko.nixosModules.disko
+    ../filesystems/disko-btrfs.nix
   ];
 
   # Identity & Time
