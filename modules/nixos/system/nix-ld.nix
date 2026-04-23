@@ -1,69 +1,16 @@
 {
   pkgs,
-  lib,
-  config,
   ...
 }: {
   programs.nix-ld = {
     enable = true;
-    libraries = with pkgs;
-      [
-        acl
-        attr
-        bzip2
-        dbus
-        expat
-        fontconfig
-        freetype
-        fuse3
-        icu
-        libnotify
-        libsodium
-        libssh
-        libunwind
-        libusb1
-        libuuid
-        nspr
-        nss
-        stdenv.cc.cc
-        util-linux
-        zlib
-        zstd
-      ]
-      ++ lib.optionals config.hardware.graphics.enable [
-        pipewire
-        cups
-        libxkbcommon
-        pango
-        mesa
-        libdrm
-        libglvnd
-        libpulseaudio
-        atk
-        cairo
-        alsa-lib
-        at-spi2-atk
-        at-spi2-core
-        gdk-pixbuf
-        glib
-        gtk3
-        libGL
-        libappindicator-gtk3
-        vulkan-loader
-        libx11
-        libxscrnsaver
-        libxcomposite
-        libxcursor
-        libxdamage
-        libxext
-        libxfixes
-        libxi
-        libxrandr
-        libxrender
-        libxtst
-        libxcb
-        libxkbfile
-        libxshmfence
-      ];
+    libraries = with pkgs; [
+      stdenv.cc.cc.lib
+      zlib
+      zstd
+      openssl
+      curl
+      libuuid
+    ];
   };
 }
