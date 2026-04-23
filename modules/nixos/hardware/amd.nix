@@ -13,9 +13,8 @@ in {
       libva-vdpau-driver
     ];
 
-    enable32Bit = mkDefault true;
+    enable32Bit = mkDefault false;
     extraPackages32 = with pkgs.driversi686Linux; [
-      mesa
     ];
   };
 
