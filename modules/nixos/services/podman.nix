@@ -1,14 +1,13 @@
 {pkgs, ...}: {
   virtualisation.podman = {
     enable = true;
-    defaultNetwork.settings.dns_enabled = true;
     dockerCompat = true;
-    dockerSocket.enable = true;
 
-    autoPrune = {
-      enable = true;
-      dates = "weekly";
-      flags = ["--all" "--volumes"];
+    containers.containersConf.settings = {
+      containers.dns_servers = [
+        "8.8.8.8"
+        "8.8.4.4"
+      ];
     };
   };
 

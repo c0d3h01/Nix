@@ -1,7 +1,4 @@
 {pkgs, ...}: {
-  # Use nftables as the backend for better performance and lower overhead
-  networking.nftables.enable = true;
-
   networking.firewall = {
     # Explicitly set firewalld as the management interface
     backend = "firewalld";

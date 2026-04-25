@@ -7,8 +7,8 @@
     ./fonts.nix
     ./gnome.nix
     ./input.nix
+    ./nix-daemon.nix
     ./nix-ld.nix
-    ./nix.nix
     ./nixpkgs.nix
     ./oomd.nix
     ./packages.nix

@@ -1,9 +1,9 @@
 {
   imports = [
-    ./kparams.nix
-    ./ksysctl.nix
-    ./ksysfs.nix
-    ./kversion.nix
+    ./params.nix
     ./security.nix
+    ./sysctl.nix
+    ./sysfs.nix
+    ./version.nix
   ];
 }
