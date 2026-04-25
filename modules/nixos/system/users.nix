@@ -8,8 +8,15 @@
     ../filesystems/disko-btrfs.nix
   ];
 
+  # System State Version
+  system.stateVersion = "25.11";
+
   # Identity & Time
   networking.hostName = "nixos";
+
+  # Disable documentation pages
+  documentation.doc.enable = false;
+  documentation.man.enable = false;
 
   # Set your time zone.
   time.timeZone = "Asia/Kolkata";
@@ -33,9 +40,6 @@
     LC_TELEPHONE = "en_IN";
     LC_TIME = "en_IN";
   };
-
-  # System State Version
-  system.stateVersion = "25.11";
 
   # Shell Environment
   programs.zsh.enable = true;

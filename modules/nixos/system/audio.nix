@@ -1,4 +1,9 @@
-{
+{ pkgs, ... }: {
+  environment.systemPackages = with pkgs; [
+    pulseaudio
+    pamixer
+  ];
+
   hardware.bluetooth = {
     enable = true;
     powerOnBoot = true;
