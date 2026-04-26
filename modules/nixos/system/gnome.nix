@@ -93,7 +93,6 @@ in {
       gnome-tweaks # Essential for GNOME customization
       gnome-text-editor # Lightweight text editor
       gnome-console # Modern terminal (kgx)
-      qbittorrent-enhanced # Torrent client
     ];
 
     # =======================================================================
