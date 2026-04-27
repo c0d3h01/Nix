@@ -1,29 +1,4 @@
 {pkgs, ...}: {
-  programs.gpg = {
-    enable = true;
-    settings = {
-      keyid-format = "0xlong";
-      with-fingerprint = true;
-      charset = "utf-8";
-      personal-digest-preferences = "SHA512";
-      cert-digest-algo = "SHA512";
-      s2k-digest-algo = "SHA512";
-      s2k-cipher-algo = "AES256";
-      s2k-count = "65011712";
-      no-comments = true;
-      no-emit-version = true;
-    };
-  };
-
-  services.gpg-agent = {
-    enable = true;
-    enableSshSupport = true;
-    pinentry.package = pkgs.pinentry-gnome3;
-    defaultCacheTtl = 14400;
-    maxCacheTtl = 28800;
-    extraConfig = "allow-loopback-pinentry";
-  };
-
   programs.git = {
     enable = true;
     signing = {
@@ -35,19 +10,22 @@
         name = "Harshal Sawant";
         email = "harshalsawant.dev@gmail.com";
       };
-      gpg.program = "${pkgs.gnupg}/bin/gpg";
-      tag.gpgSign = true;
       init.defaultBranch = "main";
-      pull.rebase = true;
+      pull.rebase = "merges";
+      push.autoSetupRemote = true;
+      credential.helper = "libsecret";
+      gpg.program = "gpg";
+      tag.gpgsign = true;
+      commit.gpgsign = true;
       core = {
         fsync = "committed";
-        sshCommand = "ssh -T";
+        sshCommand = "${pkgs.openssh}/bin/ssh -T";
+        editor = "nvim";
       };
-      credential.helper = "libsecret";
+      merge.conflictStyle = "diff3";
+      diff.algorithm = "histogram";
+      url."git@github.com:".insteadOf = "https://github.com/";
+      url."git@gitlab.com:".insteadOf = "https://gitlab.com/";
     };
-  };
-
-  environment.sessionVariables = {
-    GPG_TTY = "$TTY";
   };
 }
