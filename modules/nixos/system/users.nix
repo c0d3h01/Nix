@@ -4,8 +4,8 @@
   ...
 }: {
   imports = [
-    inputs.disko.nixosModules.disko
-    ../filesystems/disko-btrfs.nix
+    # inputs.disko.nixosModules.disko
+    ../filesystems/btrfs.nix
   ];
 
   # System State Version
