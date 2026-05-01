@@ -16,9 +16,9 @@ This repository contains my NixOS and Nix configuration, managed as a flake for 
 - **Multi-user, Multi-version**: Install multiple versions of packages side-by-side.
 - **Declarative Configuration**: Define your system, packages, and services in a single configuration file.
 
----
+<!-- --- -->
 
-## Installation
+<!-- ## Installation
 
 ```bash
 $ sudo nix --experimental-features "nix-command flakes" run \
@@ -28,4 +28,4 @@ $ sudo nix --experimental-features "nix-command flakes" run \
 	  --flake "github:c0d3h01/Nix#nixos"
 
 $ sudo nixos-install --flake "github:c0d3h01/Nix#nixos" --no-root-passwd
-```
+``` -->
