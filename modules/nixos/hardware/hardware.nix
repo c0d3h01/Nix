@@ -30,7 +30,7 @@ in {
   boot = {
     tmp.cleanOnBoot = true;
 
-    extraModulePackages = [ config.linuxPackages_latest.rtw88 ];
+    extraModulePackages = with config.linuxPackages_latest; [ rtw88 ];
 
     initrd = {
       verbose = true;
