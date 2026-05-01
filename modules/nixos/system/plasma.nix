@@ -4,46 +4,55 @@
   lib,
   ...
 }: let
-  cfg = config.services.kdeDesktop;
+  inherit (lib) mkIf mkOption;
+
 in {
   options.services.kdeDesktop = {
-    enable = lib.mkOption {
+    enable = mkOption {
       type = lib.types.bool;
       default = false;
-      description = "Enable the complete KDE Plasma 6 environment with default apps & KDE Connect.";
+      description = "Plasma 6 Desktop Environment";
     };
   };
 
-  config = lib.mkIf cfg.enable {
-    services.desktopManager.plasma6.enable = true;
+  config = mkIf config.services.kdeDesktop.enable {
 
+    services.desktopManager.plasma6.enable = true;
     services.displayManager = {
       defaultSession = "plasmax11";
-
-      sddm = {
-        enable = true;
-        wayland.enable = true;
-      };
+      sddm.enable = true;
+      sddm.wayland.enable = true;
     };
 
     programs.kdeconnect.enable = true;
-
-    networking.firewall = lib.mkIf config.networking.firewall.enable {
+    networking.firewall = mkIf config.networking.firewall.enable {
       allowedTCPPorts = [1716];
       allowedUDPPorts = [1716];
     };
 
     environment.systemPackages = with pkgs; [
-      kdePackages.kate
-      kdePackages.kcalc
-      kdePackages.konsole
+      # KDE Utilities
+      kdePackages.discover # Software center for Flatpaks/firmware updates
+      kdePackages.kcalc # Calculator
+      kdePackages.kcharselect # Character map
+      kdePackages.kclock # Clock app
+      kdePackages.kcolorchooser # Color picker
+      kdePackages.kolourpaint # Simple paint program
+      kdePackages.ksystemlog # System log viewer
+      kdePackages.sddm-kcm # SDDM configuration module
+      kdiff3 # File / directory comparison tool
+      kdePackages.kate # Text editor
+
+      # Hardware/System Utilities
+      kdePackages.isoimagewriter # Write hybrid ISOs to USB
+      kdePackages.partitionmanager # Disk and partition management
+      hardinfo2 # System benchmarks and hardware info
+      wayland-utils # Wayland diagnostic tools
+      wl-clipboard # Wayland copy/paste support
+      vlc # Media player
+      kdePackages.konsole # Terminal
       kdePackages.plasma-browser-integration
-      kdePackages.partitionmanager
-      kdePackages.kpat
-      kdePackages.sonnet
-      gnome-logs
-      libreoffice-still
-      vlc
+      kdePackages.sonnet # Spelling framework for Qt.
     ];
   };
 }
