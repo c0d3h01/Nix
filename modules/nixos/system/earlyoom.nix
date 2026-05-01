@@ -1,24 +1,35 @@
 {
-  # Early OOM killer to prevent system hangs before systemd-oomd kicks in
+  # Early OOM system executer to prevent system hangs before systemd-oomd kicks in
   services.earlyoom = {
     enable = true;
     enableNotifications = true;
-
-    # Kill processes when memory is critically low
-    freeMemThreshold = 5; # Trigger at 5% free memory
-    freeSwapThreshold = 10; # Trigger at 10% free swap
+    freeMemThreshold = 5;
+    freeSwapThreshold = 10;
 
     extraArgs = [
+      # Prefer execute heavy
       "--prefer"
-      "-100" # Prefer killing processes with high memory usage
+      "(chrome|firefox|node|electron|code|discord)"
+
+      # Core system daemons
       "--avoid"
-      "sshd"
+      "(sshd|systemd|dbus|NetworkManager)"
+
+      # Shells + editors + terminals (now includes Ghostty)
       "--avoid"
-      "systemd"
+      "(bash|zsh|fish|nvim|vim|alacritty|kitty|wezterm|ghostty)"
+
+      # GNOME session protection
       "--avoid"
-      "dbus"
+      "(gnome-shell|gdm|mutter)"
+
+      # KDE Plasma session protection
       "--avoid"
-      "NetworkManager"
+      "(plasmashell|kwin|ksmserver)"
+
+      # Avoid Brave browser from executing
+      "--avoid"
+      "(brave|brave-browser)"
     ];
   };
 }
