@@ -2,10 +2,10 @@
   services.libinput = {
     enable = true;
 
+    # Mouse support for external USB/Bluetooth mice
     mouse = {
-      accelProfile = "flat"; # Consistent speed regardless of movement speed
-      accelSpeed = "0"; # Neutral sensitivity (1:1 mapping)
-      middleEmulation = false; # Disable middle-click on simultaneous press
+      accelProfile = "flat";
+      naturalScrolling = true;
     };
 
     touchpad = {
