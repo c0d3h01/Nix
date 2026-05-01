@@ -1,6 +1,6 @@
 {pkgs, ...}: {
   environment.systemPackages = with pkgs; [
-    # [*] Graphical applications
+    # GUI
     brave
     vscode-fhs
     antigravity-fhs
@@ -8,15 +8,11 @@
     libreoffice
     qbittorrent-enhanced
 
-    # [*] cli tools
-
-    # language server protocol
+    # Cli
     nixd
     nil
     gopls
     rust-analyzer
-
-    # language
     gcc
     go
     cargo
@@ -28,9 +24,7 @@
     ocaml
     opam
     texliveBasic
-
-    # [*] SpellChecker packages
-    gspell # gtk spellchecker
+    gspell # spellchecker
     hunspell
     hunspellDicts.en_US
   ];
