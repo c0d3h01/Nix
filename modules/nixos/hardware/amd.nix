@@ -3,7 +3,7 @@
   pkgs,
   ...
 }: let
-  inherit (lib) mkIf mkDefault;
+  inherit (lib) mkDefault;
 in {
   # AMD GPU & CPU Configuration
   hardware.graphics = {
@@ -11,11 +11,12 @@ in {
     extraPackages = with pkgs; [
       mesa
       libva-vdpau-driver
+      libvdpau-va-gl
     ];
 
     enable32Bit = mkDefault false;
-    extraPackages32 = with pkgs.driversi686Linux; [
-    ];
+    # extraPackages32 = with pkgs.driversi686Linux; [
+    # ];
   };
 
   # Load amdgpu in initrd: fixes Plymouth KMS, eliminates low-res flicker,
