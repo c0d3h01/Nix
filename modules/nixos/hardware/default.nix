@@ -8,6 +8,7 @@
     ./hardware.nix
     ./power.nix
     ./touchpad.nix
-    ./zram.nix
+    # ./zram.nix
+    ./zswap.nix
   ];
 }
