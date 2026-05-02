@@ -94,6 +94,9 @@ rescue_mode() {
   mount "$BOOT" /mnt/boot
 
   swapon /mnt/var/swapfile 2>/dev/null || true
+
+  # nixos-enter
+  # echo "nameserver 1.1.1.1" > /etc/resolv.conf
 }
 
 install_mode() {
