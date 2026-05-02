@@ -95,8 +95,17 @@ rescue_mode() {
 
   swapon /mnt/var/swapfile 2>/dev/null || true
 
-  # nixos-enter
-  # echo "nameserver 1.1.1.1" > /etc/resolv.conf
+  mount --bind /dev /mnt/dev
+  mount --bind /proc /mnt/proc
+  mount --bind /sys /mnt/sys
+  mount --bind /run /mnt/run
+
+  # optional but useful
+  mkdir -p /mnt/etc
+  cp /etc/resolv.conf /mnt/etc/resolv.conf
+
+  echo -e "${GREEN}Entering nixos-enter...${NC}"
+  nixos-enter
 }
 
 install_mode() {
