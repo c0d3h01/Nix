@@ -1,17 +1,18 @@
 {pkgs, ...}: {
+  # firewalld-backed firewall with nftables and a small default allowlist.
+
   networking.firewall = {
-    # Explicitly set firewalld as the management interface
+    # Use firewalld as the management interface.
     backend = "firewalld";
 
-    # Security: 'loose' allows asymmetric routing (common in dev/VM setups)
+    # Allow asymmetric routing used by some dev and VM setups.
     checkReversePath = "loose";
 
-    # Logging: Disable refused connections to reduce log noise, keep reverse path drops
+    # Reduce refused-connection noise, but keep reverse-path drop logs.
     logRefusedConnections = false;
     logReversePathDrops = true;
 
-    # Ports: Only essential services.
-    # Note: When using firewalld, prefer adding ports via `services.firewalld` zones
+    # Keep shared defaults small; prefer service-specific zone rules.
     allowedTCPPorts = [
       22 # SSH
       80 # HTTP
@@ -32,17 +33,15 @@
     package = pkgs.firewalld-gui;
 
     settings = {
-      # Enforce nftables backend
+      # Enforce nftables backend.
       FirewallBackend = "nftables";
 
-      # Default Zone: 'public' is standard for laptops/workstations
+      # Standard zone for laptops and workstations.
       DefaultZone = "public";
 
-      # Lockdown: Prevent unauthorized apps from changing firewall rules
+      # Prevent unauthorized apps from changing firewall rules.
       Lockdown = true;
 
-      # Allow Multicast DNS (mDNS) for local network discovery (printers, shares)
-      # This is often needed for a good desktop experience
       AllowZoneDrifting = false;
     };
   };

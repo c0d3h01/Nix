@@ -1,4 +1,6 @@
 {
+  # Kernel security defaults with compatibility for sandboxed apps and modules.
+
   security = {
     protectKernelImage = true;
     lockKernelModules = false; # breaks virtd, wireguard and iptables

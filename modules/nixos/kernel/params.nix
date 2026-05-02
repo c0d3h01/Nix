@@ -1,5 +1,6 @@
 {
-  # https://www.kernel.org/doc/html/latest/admin-guide/kernel-parameters.html
+  # Kernel parameters for hardening, power behavior, boot visuals, and device quirks.
+
   boot.kernelParams = [
     # disable all mitigations for Spectre, Meltdown, etc.
     "mitigations=off"
@@ -11,7 +12,7 @@
     # make stack-based attacks on the kernel harder
     "randomize_kstack_offset=on"
 
-    # controls the behavior of vsyscalls. this has been defaulted to none back in 2016 - break really old binaries for security
+    # Disable legacy vsyscalls; this can break very old binaries.
     "vsyscall=none"
 
     # reduce most of the exposure of a heap attack to a single cache
@@ -20,20 +21,19 @@
     # Disable debugfs which exposes sensitive kernel data
     "debugfs=off"
 
-    # Sometimes certain kernel exploits will cause what is called an "oops" which is a kernel panic
-    # that is recoverable. This will make it unrecoverable, and therefore safe to those attacks
+    # Treat recoverable kernel oopses as panics.
     "oops=panic"
 
     # only allow signed modules
     # "module.sig_enforce=1"
 
-    # blocks access to all kernel memory, even preventing administrators from being able to inspect and probe the kernel
+    # Block kernel memory access, including administrator inspection.
     # "lockdown=confidentiality"
 
     # enable buddy allocator free poisoning
     "page_poison=on"
 
-    # performance improvement for direct-mapped memory-side-cache utilization, reduces the predictability of page allocations
+    # Improve direct-map cache use and reduce page allocation predictability.
     "page_alloc.shuffle=1"
 
     # for debugging kernel-level slab issues
@@ -42,7 +42,7 @@
     # disable sysrq keys. sysrq is seful for debugging, but also insecure
     "sysrq_always_enabled=0" # 0 | 1 # 0 means disabled
 
-    # ignore access time (atime) updates on files, except when they coincide with updates to the ctime or mtime
+    # Avoid atime updates on the root filesystem.
     "rootflags=noatime"
 
     # linux security modules

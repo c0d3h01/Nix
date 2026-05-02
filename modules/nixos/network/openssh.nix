@@ -14,10 +14,10 @@ in {
     openFirewall = true;
     ports = [22];
 
-    # Tell SSH to look in the sops-decrypted location for user keys
+    # Read user keys from the home directory and the SOPS-rendered path.
     settings.AuthorizedKeysFile = "%h/.ssh/authorized_keys /run/secrets-for-users/%N/${userName}";
 
-    # Host Keys: Ed25519, RSA
+    # Host keys.
     hostKeys = [
       {
         path = "/etc/ssh/ssh_host_ed25519_key";
@@ -31,7 +31,7 @@ in {
     ];
 
     settings = {
-      # Security Hardening
+      # Authentication and exposure.
       PermitRootLogin = "no";
       PasswordAuthentication = false;
       KbdInteractiveAuthentication = false;
@@ -40,11 +40,11 @@ in {
       UseDns = false;
       X11Forwarding = false;
 
-      # Stability
+      # Keepalive behavior.
       ClientAliveInterval = 60;
       ClientAliveCountMax = 5;
 
-      # Cryptography
+      # Modern key exchange, cipher, and MAC allowlists.
       KexAlgorithms = [
         "mlkem768x25519-sha256"
         "sntrup761x25519-sha512@openssh.com"
@@ -67,15 +67,13 @@ in {
     };
   };
 
-  # SOPS Integration for SSH Keys
+  # SOPS-rendered authorized_keys for this user.
   sops.secrets.${secretName} = {
-    # Owner/Group usually root, but SSH reads it as the user logic handles permissions
     owner = "root";
     group = "root";
     mode = "0400";
 
-    # This path must match the 'AuthorizedKeysFile' entry above
-    # %N expands to the node name (hostname), ensuring isolation if you share secrets
+    # Must match AuthorizedKeysFile; %N scopes secrets by host.
     path = "/run/secrets-for-users/%N/${userName}";
   };
 }

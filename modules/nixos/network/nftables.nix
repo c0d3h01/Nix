@@ -1,5 +1,5 @@
 {pkgs, ...}: {
-  # 🤯️ Use nftables as the backend for better performance and lower overhead
+  # Enable nftables and keep iptables tooling available.
   networking.nftables.enable = true;
-  environment.systemPackages = [ pkgs.iptables ];
+  environment.systemPackages = [pkgs.iptables];
 }

@@ -1,4 +1,6 @@
 {config, ...}: {
+  # Sysctl hardening plus compatibility limits for desktop workloads.
+
   boot.kernel.sysctl = {
     # The Magic SysRq key is a key combo that allows users connected to the
     # system console of a Linux kernel to perform some low-level commands.
@@ -20,7 +22,7 @@
     # Disable ftrace debugging
     "kernel.ftrace_enabled" = false;
 
-    # Avoid kernel memory address exposures via dmesg (this value can also be set by CONFIG_SECURITY_DMESG_RESTRICT).
+    # Avoid kernel memory address exposure via dmesg.
     "kernel.dmesg_restrict" = 1;
 
     # Disable SUID binary dump
@@ -46,8 +48,7 @@
     # patches a potential security hole in our system.
     "kernel.kexec_load_disabled" = true;
 
-    # Disable TIOCSTI ioctl, which allows a user to insert characters into the input queue of a terminal
-    # this has been known for a long time to be used in privilege escalation attacks
+    # Disable TIOCSTI terminal injection.
     "dev.tty.legacy_tiocsti" = 0;
 
     # Disable the ability to load kernel modules, we already load the ones that we need
@@ -83,8 +84,7 @@
     # directory owner matches the symlink
     "fs.protected_symlinks" = 1;
 
-    # increase the map count, this is important for applications that require a lot of memory mappings
-    # such as games and emulators
+    # Large mapping limit for games, emulators, and similar workloads.
     "vm.max_map_count" = 2147483642;
   };
 }
