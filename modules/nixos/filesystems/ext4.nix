@@ -1,4 +1,6 @@
 {
+  # Ext4 layout with a protected EFI partition and swap file.
+
   fileSystems."/boot" = {
     device = "/dev/disk/by-label/nix-boot";
     fsType = "vfat";
@@ -20,7 +22,10 @@
     ];
   };
 
-  # fileSystems.swapDevices = [
-  #   {device = "/dev/disk/by-label/nix-swap";}
-  # ];
+  swapDevices = [
+    {
+      device = "/swapfile";
+      size = 8192;
+    }
+  ];
 }

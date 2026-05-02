@@ -4,6 +4,8 @@
   config,
   ...
 }: {
+  # ACPI events, status tools, and acpi_call support for laptop power controls.
+
   # Listen for hardware events (lid close, power button)
   services.acpid.enable = true;
 

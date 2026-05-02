@@ -1,25 +1,14 @@
-{
-  config,
-  lib,
-  pkgs,
-  ...
-}: let
-  inherit (lib) mkIf mkDefault;
-  rootFs = config.fileSystems."/".fsType;
-  isBtrfs = rootFs == "btrfs";
-in {
-  environment.systemPackages = [
-    pkgs.btrfs-progs
-  ];
+{config, ...}: {
+  # Weekly discard and Btrfs scrub maintenance.
 
   services.fstrim = {
-    enable = mkDefault true;
+    enable = true;
     interval = "weekly";
   };
 
-  services.btrfs.autoScrub = mkIf isBtrfs {
-    enable = mkDefault true;
-    interval = "monthly";
+  services.btrfs.autoScrub = {
+    enable = config.boot.supportedFilesystems.btrfs or false;
+    interval = "weekly";
     fileSystems = ["/"];
   };
 }

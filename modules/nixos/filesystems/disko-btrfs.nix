@@ -1,4 +1,6 @@
 {
+  # Disko layout for one GPT disk with an ESP and compressed Btrfs subvolumes.
+
   disko.devices = {
     disk.main = {
       type = "disk";

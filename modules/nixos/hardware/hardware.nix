@@ -6,6 +6,8 @@
 }: let
   inherit (lib) mkDefault mkIf mkMerge;
 in {
+  # Baseline hardware defaults, firmware, initrd modules, and AMD support.
+
   imports = [
     (modulesPath + "/installer/scan/not-detected.nix")
   ];
@@ -30,10 +32,11 @@ in {
   boot = {
     tmp.cleanOnBoot = true;
 
-    extraModulePackages = with config.boot.kernelPackages; [ rtw88 ];
+    # extraModulePackages = with config.boot.kernelPackages; [ rtw88 ];
 
     initrd = {
       verbose = true;
+      systemd.enable = true;
 
       compressor = "zstd";
       compressorArgs = ["-19" "-T0"];

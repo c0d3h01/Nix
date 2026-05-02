@@ -1,4 +1,6 @@
 {
+  # System-wide libinput settings for mice and touchpads.
+
   services.libinput = {
     enable = true;
 

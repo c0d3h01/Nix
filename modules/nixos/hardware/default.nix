@@ -3,12 +3,11 @@
     ./acpi.nix
     ./amd.nix
     ./bootloader.nix
+    ./cursor.nix
     ./filesystem.nix
     ./firmware.nix
     ./hardware.nix
     ./power.nix
-    ./touchpad.nix
-    # ./zram.nix
-    ./zswap.nix
+    ./swap.nix
   ];
 }

@@ -1,4 +1,6 @@
 {
+  # GRUB bootloader for UEFI systems.
+
   boot.loader = {
     timeout = 5;
     efi.canTouchEfiVariables = true;
