@@ -85,6 +85,7 @@ install_nixos() {
 
 rescue_mode() {
   echo -e "${GREEN}Entering rescue mode...${NC}"
+  
   mount -o subvol=@,noatime,compress=zstd:3 "$ROOT" /mnt
   mkdir -p /mnt/{home,nix,var,boot}
 
@@ -95,15 +96,10 @@ rescue_mode() {
 
   swapon /mnt/var/swapfile 2>/dev/null || true
 
-  mount --bind /dev /mnt/dev
-  mount --bind /proc /mnt/proc
-  mount --bind /sys /mnt/sys
-  mount --bind /run /mnt/run
+  # cp /etc/resolv.conf /mnt/etc/resolv.conf
 
-  # optional but useful
-  mkdir -p /mnt/etc
-  cp /etc/resolv.conf /mnt/etc/resolv.conf
-
+  # nixos-enter automatically mounts /dev, /proc, /sys, /run
+  # and sets up /etc + DNS resolution. No manual bind mounts needed.
   echo -e "${GREEN}Entering nixos-enter...${NC}"
   nixos-enter
 }
