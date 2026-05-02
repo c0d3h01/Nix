@@ -3,6 +3,9 @@
 in {
   nixpkgs = {
     hostPlatform = mkDefault "x86_64-linux";
-    config.allowUnfree = true;
+    config = {
+      allowUnfree = true;
+      allowUnfreePredicate = _: true;
+    };
   };
 }

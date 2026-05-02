@@ -1,7 +1,8 @@
 {pkgs, ...}: {
   environment.systemPackages = with pkgs; [
     # GUI
-    brave
+    # brave
+    google-chrome
     vscode-fhs
     antigravity-fhs
     github-desktop

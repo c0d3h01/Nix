@@ -57,10 +57,10 @@
 
   systemd.timers.nix-cleanup-gcroots = {
     timerConfig = {
-      OnCalendar = [ "weekly" ];
+      OnCalendar = ["weekly"];
       Persistent = true;
     };
-    wantedBy = [ "timers.target" ];
+    wantedBy = ["timers.target"];
   };
   systemd.services.nix-cleanup-gcroots = {
     serviceConfig = {

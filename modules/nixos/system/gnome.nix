@@ -5,7 +5,6 @@
   ...
 }: let
   inherit (lib) mkIf;
-
 in {
   options.services.gnomeDesktop = {
     enable = lib.mkOption {
@@ -16,7 +15,6 @@ in {
   };
 
   config = mkIf config.services.gnomeDesktop.enable {
-
     services.desktopManager.gnome.enable = true;
     services.displayManager = {
       gdm.enable = true;

@@ -1,35 +1,77 @@
 {
-  # Early OOM system executer to prevent system hangs before systemd-oomd kicks in
-  services.earlyoom = {
-    enable = true;
-    enableNotifications = true;
-    freeMemThreshold = 5;
-    freeSwapThreshold = 10;
+  lib,
+  pkgs,
+  config,
+  ...
+}: let
+  inherit (lib) mkIf mkForce concatStringsSep;
 
-    extraArgs = [
-      # Prefer execute heavy
-      "--prefer"
-      "(chrome|firefox|node|electron|code|discord)"
+  avoid = concatStringsSep "|" [
+    "(h|H)yprland"
+    "sway"
+    "Xwayland"
+    "cryptsetup"
+    "dbus-.*"
+    "gpg-agent"
+    "greetd"
+    "ssh-agent"
+    ".*qemu-system.*"
+    "sddm"
+    "sshd"
+    "systemd"
+    "systemd-.*"
+    "wezterm"
+    "kitty"
+    "ghostty"
+    "bash"
+    "zsh"
+    "fish"
+    "n?vim"
+    "akkoma"
+  ];
 
-      # Core system daemons
-      "--avoid"
-      "(sshd|systemd|dbus|NetworkManager)"
+  prefer = concatStringsSep "|" [
+    "Web Content"
+    "Isolated Web Co"
+    "firefox.*"
+    "chrom(e|ium).*"
+    "electron"
+    "dotnet"
+    ".*.exe"
+    "java.*"
+    "pipewire(.*)"
+    "nix"
+    "npm"
+    "node"
+    "pipewire(.*)"
+  ];
+in {
+  # Kill preferred user workloads before memory pressure freezes the system.
+  services = {
+    earlyoom = {
+      enable = true;
+      enableNotifications = true;
 
-      # Shells + editors + terminals (now includes Ghostty)
-      "--avoid"
-      "(bash|zsh|fish|nvim|vim|alacritty|kitty|wezterm|ghostty)"
+      reportInterval = 0;
+      freeSwapThreshold = 5;
+      freeSwapKillThreshold = 2;
+      freeMemThreshold = 5;
+      freeMemKillThreshold = 2;
 
-      # GNOME session protection
-      "--avoid"
-      "(gnome-shell|gdm|mutter)"
+      extraArgs = [
+        "-g"
+        "--avoid"
+        "'^(${avoid})$'"
+        "--prefer"
+        "'^(${prefer})$'"
+      ];
 
-      # KDE Plasma session protection
-      "--avoid"
-      "(plasmashell|kwin|ksmserver)"
+      # Keep a minimal kill record until this is wired into the journal.
+      killHook = pkgs.writeShellScript "earlyoom-kill-hook" ''
+        echo "Process $EARLYOOM_NAME ($EARLYOOM_PID) was killed"
+      '';
+    };
 
-      # Avoid Brave browser from executing
-      "--avoid"
-      "(brave|brave-browser)"
-    ];
+    systembus-notify.enable = mkForce true;
   };
 }

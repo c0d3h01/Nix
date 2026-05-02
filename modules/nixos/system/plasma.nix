@@ -5,7 +5,6 @@
   ...
 }: let
   inherit (lib) mkIf mkOption;
-
 in {
   options.services.kdeDesktop = {
     enable = mkOption {
@@ -16,7 +15,6 @@ in {
   };
 
   config = mkIf config.services.kdeDesktop.enable {
-
     services.desktopManager.plasma6.enable = true;
     services.displayManager = {
       defaultSession = "plasmax11";

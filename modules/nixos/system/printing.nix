@@ -3,7 +3,7 @@
     enable = false;
     openFirewall = true;
     browsing = true;
-    drivers = [ pkgs.gutenprint ];
+    drivers = [pkgs.gutenprint];
   };
 
   services.avahi = {

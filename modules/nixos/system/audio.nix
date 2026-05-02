@@ -1,9 +1,4 @@
-{ pkgs, ... }: {
-  environment.systemPackages = with pkgs; [
-    pavucontrol
-    pamixer
-  ];
-
+{pkgs, ...}: {
   hardware.bluetooth = {
     enable = true;
     powerOnBoot = true;
@@ -22,7 +17,7 @@
     # JACK applications
     jack.enable = true;
 
-    # use the example session manager (no others are packaged yet so this is enabled by default,
+    # Example session manager; kept disabled while WirePlumber is active.
     # media-session.enable = true;
   };
 }

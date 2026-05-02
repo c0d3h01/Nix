@@ -1,9 +1,13 @@
-{pkgs, lib, config, ...}: let
+{
+  pkgs,
+  lib,
+  config,
+  ...
+}: let
   inherit (lib) mkDefault optionals;
 in {
   programs.nix-ld.enable = mkDefault true;
-  programs.nix-ld.libraries =
-    with pkgs;
+  programs.nix-ld.libraries = with pkgs;
     [
       acl
       attr

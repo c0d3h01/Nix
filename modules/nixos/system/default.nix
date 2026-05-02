@@ -2,10 +2,13 @@
   imports = [
     ./appImage.nix
     ./audio.nix
+    ./dbus.nix
+    ./documentation.nix
     ./earlyoom.nix
     ./flatpak.nix
     ./fonts.nix
     ./gnome.nix
+    ./graphical.nix
     ./nix-daemon.nix
     ./nix-ld.nix
     ./nixpkgs.nix

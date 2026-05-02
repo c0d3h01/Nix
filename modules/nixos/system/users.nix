@@ -14,10 +14,6 @@
   # Identity & Time
   networking.hostName = "nixos";
 
-  # Disable documentation pages
-  documentation.doc.enable = false;
-  documentation.man.enable = false;
-
   # Set your time zone.
   time.timeZone = "Asia/Kolkata";
 
