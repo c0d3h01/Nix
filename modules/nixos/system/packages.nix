@@ -1,12 +1,10 @@
 {pkgs, ...}: {
   environment.systemPackages = with pkgs; [
     # GUI
-    # brave
-    google-chrome
     vscode-fhs
     antigravity-fhs
     github-desktop
-    libreoffice
+    libreoffice-still
     qbittorrent-enhanced
 
     # Cli
