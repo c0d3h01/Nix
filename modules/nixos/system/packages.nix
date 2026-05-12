@@ -2,12 +2,12 @@
   environment.systemPackages = with pkgs; [
     # GUI
     vscode-fhs
-    antigravity-fhs
     github-desktop
     libreoffice-still
     qbittorrent-enhanced
 
     # Cli
+    distrobox
     nixd
     nil
     gopls
