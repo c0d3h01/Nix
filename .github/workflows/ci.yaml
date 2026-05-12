@@ -6,6 +6,7 @@ on:
     branches: [ main, master ] # Run on every push to primary branches
   pull_request:
     branches: [ main, master ] # Run on all incoming pull requests
+  workflow_dispatch: # Allows manual run from the Actions UI
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
@@ -23,3 +24,6 @@ jobs:
         with:
           fail-mode: true # Exit with error if flake is unhealthy
           send-report: true # Post a visual health summary in the CI logs
+          # Explicitly pointing to the lockfile ensures the action
+          # doesn't waste time searching for it
+          flake-lock-path: ./flake.lock
