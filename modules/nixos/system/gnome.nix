@@ -4,7 +4,7 @@
   lib,
   ...
 }: let
-  inherit (lib) mkIf;
+  inherit (lib) mkIf mkForce;
 in {
   options.services.gnomeDesktop = {
     enable = lib.mkOption {
@@ -24,36 +24,18 @@ in {
 
     services.gnome = {
       # Disable file indexing
-      localsearch.enable = lib.mkForce false;
-      tinysparql.enable = lib.mkForce false;
+      localsearch.enable = mkForce false;
+      tinysparql.enable = mkForce false;
       # Disable online accounts
-      gnome-online-accounts.enable = lib.mkForce false;
+      gnome-online-accounts.enable = mkForce false;
       # Disable initial setup wizard
-      gnome-initial-setup.enable = lib.mkForce false;
+      gnome-initial-setup.enable = mkForce false;
       # Disable browser connector
-      gnome-browser-connector.enable = lib.mkForce false;
+      gnome-browser-connector.enable = mkForce false;
       # Disable GNOME Software
-      gnome-software.enable = lib.mkForce false;
+      gnome-software.enable = mkForce false;
       # Disable remote desktop
-      gnome-remote-desktop.enable = lib.mkForce false;
-    };
-
-    systemd.user.services.gnome-shell = {
-      serviceConfig = {
-        Environment = "G_ENABLE_DIAGNOSTIC=0";
-        Nice = -5;
-        IOSchedulingClass = "idle";
-        MemoryHigh = "512M";
-        MemoryMax = "768M";
-      };
-    };
-
-    # Limit mutter memory usage
-    systemd.user.services.mutter = {
-      serviceConfig = {
-        MemoryHigh = "384M";
-        MemoryMax = "512M";
-      };
+      gnome-remote-desktop.enable = mkForce false;
     };
 
     programs.kdeconnect = {
@@ -61,7 +43,7 @@ in {
       package = pkgs.gnomeExtensions.gsconnect;
     };
 
-    networking.firewall = lib.mkIf config.networking.firewall.enable {
+    networking.firewall = mkIf config.networking.firewall.enable {
       allowedTCPPorts = [1716];
       allowedUDPPorts = [1716];
     };
@@ -69,7 +51,8 @@ in {
     environment.systemPackages = with pkgs; [
       gnome-tweaks
       gnome-text-editor
-      gnome-console
+      gnome-console # Gnome fallback terminal
+      ptyxis # Terminal for GNOME with first-class support for containers
     ];
 
     environment.gnome.excludePackages = with pkgs; [
