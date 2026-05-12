@@ -1,44 +1,25 @@
-# Steps: format → commit fmt changes (push only) → validate flake.
+# https://github.com/DeterminateSystems/flake-checker-action
 
-name: CI
-
+name: Flake Checker
 on:
   push:
-    branches: [main]
+    branches: [ main, master ] # Run on every push to primary branches
   pull_request:
-    branches: [main]
+    branches: [ main, master ] # Run on all incoming pull requests
 
-permissions: {}
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true # Kill previous runs if a new commit is pushed
 
 jobs:
-  ci:
+  flake-checker:
     runs-on: ubuntu-latest
-    permissions:
-      contents: write
-      id-token: write
-
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout code
+        uses: actions/checkout@v4 # Clones repo to access flake.lock
 
-      - uses: DeterminateSystems/determinate-nix-action@v3
-
-      - name: Format
-        run: nix fmt .
-
-      - name: Commit formatting changes
-        if: github.event_name == 'push'
-        run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "github-actions[bot]@users.noreply.github.com"
-          if ! git diff --quiet; then
-            git add -A
-            git commit -m "style(fmt): apply nix formatting [skip ci]"
-            git push
-          fi
-
-      - name: Check formatting drift (PR only)
-        if: github.event_name == 'pull_request'
-        run: git diff --exit-code
-
-      - name: Validate flake
-        run: nix flake check --all-systems --show-trace
+      - name: Check Nix flake health
+        uses: DeterminateSystems/flake-checker-action@main
+        with:
+          fail-mode: true # Exit with error if flake is unhealthy
+          send-report: true # Post a visual health summary in the CI logs
