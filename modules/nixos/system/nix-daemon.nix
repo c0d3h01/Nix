@@ -34,8 +34,8 @@
       experimental-features = ["nix-command" "flakes"];
 
       # Network & Caches
-      http-connections = 128;
-      max-substitution-jobs = 128;
+      http-connections = 50;
+      max-substitution-jobs = 16;
       builders-use-substitutes = true;
 
       substituters = [
