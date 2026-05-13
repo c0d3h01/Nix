@@ -2,12 +2,23 @@
   # Kernel parameters for hardening, power behavior, boot visuals, and device quirks.
 
   boot.kernelParams = [
+    # Suppress kernel messages below error level (3 = KERN_ERR)
+    "quiet"
+    "loglevel=3"
+
+    # Suppress udev noise, keep errors
+    "rd.udev.log_level=3"
+
+    # systemd: only print status lines for failed units
+    "systemd.show_status=error"
+    "rd.systemd.show_status=error"
+
     # disable all mitigations for Spectre, Meltdown, etc.
     "mitigations=off"
 
     # NixOS produces many wakeups per second, which is bad for battery life.
     # This kernel parameter disables the timer tick on the last 4 cores
-    "nohz_full=4-7"
+    # "nohz_full=4-7"
 
     # make stack-based attacks on the kernel harder
     "randomize_kstack_offset=on"
@@ -46,7 +57,7 @@
     "rootflags=noatime"
 
     # linux security modules
-    "lsm=landlock,lockdown,yama,integrity,apparmor,bpf,tomoyo,selinux"
+    "lsm=landlock,lockdown,yama,integrity,apparmor,bpf"
 
     # prevent the kernel from blanking plymouth out of the fb
     # "fbcon=nodefer"
@@ -54,9 +65,6 @@
     # https://en.wikipedia.org/wiki/Kernel_page-table_isolation
     # auto means kernel will automatically decide the pti state
     "pti=auto" # on || off
-
-    # disable the intel_idle (it stinks anyway) driver and use acpi_idle instead
-    "idle=nomwait"
 
     # enable IOMMU for devices used in passthrough and provide better host performance
     "iommu=pt"
