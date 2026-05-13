@@ -22,7 +22,6 @@
     ./secrets.nix
     ./spicetify.nix
     ./starship.nix
-    ./stylix.nix
     ./tmux.nix
     ./vesktop.nix
     ./yt-dlp.nix

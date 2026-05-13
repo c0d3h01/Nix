@@ -5,11 +5,6 @@
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
     flake-utils.url = "github:numtide/flake-utils";
 
-    disko = {
-      url = "github:nix-community/disko";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
-
     home-manager = {
       url = "github:nix-community/home-manager";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -25,18 +20,8 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
-    nur = {
-      url = "github:nix-community/NUR";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
-
     nixvim = {
       url = "github:nix-community/nixvim";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
-
-    stylix = {
-      url = "github:nix-community/stylix";
       inputs.nixpkgs.follows = "nixpkgs";
     };
   };
@@ -46,7 +31,6 @@
     nixpkgs,
     flake-utils,
     home-manager,
-    nur,
     ...
   } @ inputs: let
     specialArgs = {inherit inputs self;};
@@ -55,7 +39,7 @@
       import nixpkgs {
         inherit system;
         config.allowUnfree = true;
-        overlays = [nur.overlays.default];
+        overlays = [ ];
       };
   in
     flake-utils.lib.eachDefaultSystem (system: let
@@ -86,12 +70,6 @@
           system = "x86_64-linux";
           inherit specialArgs;
           modules = [
-            {
-              nixpkgs = {
-                config.allowUnfree = true;
-                overlays = [nur.overlays.default];
-              };
-            }
             ./modules/nixos
             home-manager.nixosModules.home-manager
             {
