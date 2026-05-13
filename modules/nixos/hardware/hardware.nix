@@ -5,9 +5,8 @@
   ...
 }: let
   inherit (lib) mkDefault mkIf mkMerge;
-in {
-  # Baseline hardware defaults, firmware, initrd modules, and AMD support.
 
+in {
   imports = [
     (modulesPath + "/installer/scan/not-detected.nix")
   ];
@@ -30,34 +29,16 @@ in {
   };
 
   boot = {
-    tmp.cleanOnBoot = true;
-
-    # extraModulePackages = with config.boot.kernelPackages; [ rtw88 ];
-
     initrd = {
-      verbose = true;
-      systemd.enable = true;
-
+      verbose = false;
       compressor = "zstd";
       compressorArgs = ["-19" "-T0"];
-
-      supportedFilesystems = [
-        "btrfs"
-        "ext4"
-        "ntfs"
-        "exfat"
-        "vfat"
-        "xfs"
-      ];
 
       availableKernelModules = [
         "nvme"
         "ahci"
         "xhci_pci"
-        "usbhid"
-        "usb_storage"
         "sd_mod"
-        "sr_mod"
       ];
 
       kernelModules = [
