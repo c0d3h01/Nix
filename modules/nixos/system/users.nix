@@ -1,4 +1,5 @@
 {
+  config,
   lib,
   pkgs,
   inputs,
@@ -7,13 +8,8 @@
   inherit (lib) mkDefault;
 
 in {
-  imports = [
-    # inputs.disko.nixosModules.disko
-    ../filesystems/btrfs.nix
-  ];
-
   # System State Version
-  system.stateVersion = "25.11";
+  system.stateVersion = config.system.nixos.release;
 
   # Identity & Time
   networking.hostName = "nixos";
