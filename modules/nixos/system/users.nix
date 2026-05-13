@@ -1,8 +1,12 @@
 {
+  lib,
   pkgs,
   inputs,
   ...
-}: {
+}: let
+  inherit (lib) mkDefault;
+
+in {
   imports = [
     # inputs.disko.nixosModules.disko
     ../filesystems/btrfs.nix
@@ -19,6 +23,11 @@
 
   # Select internationalisation properties.
   i18n.defaultLocale = "en_US.UTF-8";
+  console = {
+    enable = mkDefault true;
+    font = "Lat2-Terminus16";
+    keyMap = "us";
+  };
 
   # Locale
   i18n.extraLocales = ["en_IN/UTF-8"];
