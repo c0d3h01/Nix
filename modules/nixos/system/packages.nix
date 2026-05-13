@@ -17,8 +17,8 @@
     cargo
     rustc
     rustfmt
-    python312
-    jupyter
+    python313
+    python313Packages.jupyterlab
     ruby
     ocaml
     opam
