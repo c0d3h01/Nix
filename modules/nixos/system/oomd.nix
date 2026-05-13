@@ -1,7 +1,7 @@
 {
   systemd = {
     oomd = {
-      enable = true;
+      enable = false;
       enableRootSlice = true;
       enableUserSlices = true;
       enableSystemSlice = true;
