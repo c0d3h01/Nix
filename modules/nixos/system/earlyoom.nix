@@ -22,6 +22,7 @@
     "sshd"
     "ghostty"
     "kitty"
+    "ptyxis"
   ];
 
   prefer = concatStringsSep "|" [
