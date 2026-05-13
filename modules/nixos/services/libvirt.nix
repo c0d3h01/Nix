@@ -2,7 +2,7 @@
   programs.virt-manager.enable = true;
 
   virtualisation = {
-    waydroid.enable = true;
+    waydroid.enable = false;
 
     libvirtd = {
       enable = true;
