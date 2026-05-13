@@ -5,6 +5,7 @@
     ./dbus.nix
     ./documentation.nix
     ./earlyoom.nix
+    ./filesystem.nix
     ./flatpak.nix
     ./fonts.nix
     ./gnome.nix
