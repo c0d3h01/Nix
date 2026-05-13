@@ -8,10 +8,10 @@
   # powerManagement.cpuFreqGovernor = "schedutil";
 
   # Dynamically tunes kernel BPF parameters for network and latency optimization
-  services.bpftune.enable = true;
+  # services.bpftune.enable = true;
 
   # Distributes hardware interrupts across CPU cores to reduce latency spikes
-  services.irqbalance.enable = true;
+  # services.irqbalance.enable = true;
 
   # Power management settings
   services.upower = {
