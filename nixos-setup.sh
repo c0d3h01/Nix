@@ -5,12 +5,8 @@
 set -euo pipefail
 shopt -s inherit_errexit 2>/dev/null || true
 
-readonly SCRIPT_NAME
-SCRIPT_NAME="$(basename "$0")"
-
+readonly SCRIPT_NAME="$(basename "$0")"
 readonly REQUIRED_CMDS=(parted mkfs.vfat mkfs.btrfs btrfs nixos-generate-config nixos-install nixos-enter)
-
-# Colors
 readonly RED='\033[0;31m' GREEN='\033[0;32m' YELLOW='\033[0;33m' BLUE='\033[0;34m' NC='\033[0m'
 
 # State
